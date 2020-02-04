@@ -54,16 +54,9 @@ namespace utils {
         template<
             typename _Type /* Type to be initialized */
         > constexpr operator _Type&() const noexcept;
-	};
+    };
 
-	/************************************************************************************/
-
-	template<
-		typename _Type
-	> struct is_possible_to_construct_helper
-	{ static constexpr bool value = true; };
-
-	/************************************************************************************/
+    /************************************************************************************/
 
     //
     // Fundamental types registration

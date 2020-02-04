@@ -17,17 +17,17 @@ namespace details {
         size_t    _Idx  /* First index */,
         size_t... _Idxs /* Rest indices */
     > constexpr auto _GetFieldsCount_Impl( std::index_sequence<_Idx, _Idxs...> indices ) noexcept
-		-> decltype
-		( 
-		    /* Attempt to aggregate initialization with specified amount of params.
+        -> decltype
+        ( 
+            /* Attempt to aggregate initialization with specified amount of params.
              * Failure is not threated as error due to SFINAE. Initialization can fail
              * only in case when amount of fields is less than items in aggregate
              * initialization list. Otherwise initialization succeeds. */
-			_Type{ utils::_UniversalInit<_Idx>{}, utils::_UniversalInit<_Idxs>{}... }, 
+            _Type{ utils::_UniversalInit<_Idx>{}, utils::_UniversalInit<_Idxs>{}... }, 
 
-			/* But as return type we use size_t */
-			use_as_return_type( size_t )
-		)
+            /* But as return type we use size_t */
+            use_as_return_type( size_t )
+        )
     {
         //
         // In case of successful instantiation of function 

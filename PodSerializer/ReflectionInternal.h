@@ -16,22 +16,24 @@ namespace details {
         typename  _Type /* Type to count fields in */,
         size_t    _Idx  /* First index */,
         size_t... _Idxs /* Rest indices */
-    > constexpr auto _GetFieldsCount_Impl( size_t& count, std::index_sequence<_Idx, _Idxs...> /* indices */ )
-        noexcept( std::is_nothrow_constructible<_Type>::value )
-        -> decltype( 
-            /* Attempt to aggregate initialization with specified amount of params.
+    > constexpr auto _GetFieldsCount_Impl( std::index_sequence<_Idx, _Idxs...> indices ) noexcept
+		-> decltype
+		( 
+		    /* Attempt to aggregate initialization with specified amount of params.
              * Failure is not threated as error due to SFINAE. Initialization can fail
              * only in case when amount of fields is less than items in aggregate
              * initialization list. Otherwise initialization succeeds. */
-            _Type{ utils::_UniversalInit<_Idx>{}, utils::_UniversalInit<_Idxs>{}... } 
-        )
+			_Type{ utils::_UniversalInit<_Idx>{}, utils::_UniversalInit<_Idxs>{}... }, 
+
+			/* But as return type we use size_t */
+			use_as_return_type( size_t )
+		)
     {
         //
         // In case of successful instantiation of function 
         // template we receive type's fields count.
         // 
-        count = sizeof...( _Idxs ) + 1;
-        return _Type{};
+        return indices.size();
     }
 
     //
@@ -40,18 +42,14 @@ namespace details {
     template<
         typename  _Type /* Type to count fields in */,
         size_t... _Idxs /* Indices */
-    > constexpr void _GetFieldsCount_Impl( size_t& count, std::index_sequence<_Idxs...> /* indices */ )
-        noexcept( 
-            /* At the end of recursion noexcept specifier will depend on type _Type */
-            std::is_nothrow_constructible<_Type>::value 
-        )
+    > constexpr size_t _GetFieldsCount_Impl( std::index_sequence<_Idxs...> /* indices */ ) noexcept
     {
         //
         // First template instantiated unsuccessfully,
         // Reducing parameters amount by one and trying again.
         // 
-        _GetFieldsCount_Impl<_Type>( 
-            count, std::make_index_sequence<sizeof...( _Idxs ) - 1>{} 
+        return _GetFieldsCount_Impl<_Type>( 
+            std::make_index_sequence<sizeof...( _Idxs ) - 1>{} 
         );
     }
 

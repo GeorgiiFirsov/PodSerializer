@@ -24,32 +24,26 @@ namespace reflection {
 
     template<
         typename _Type /* Type to count fields in */
-    > constexpr size_t GetFieldsCount()
-        noexcept
+    > constexpr size_t GetFieldsCount() noexcept
     {
         REFLECTION_CHECK_TYPE( _Type );
 
-        size_t result;
-        details::_GetFieldsCount_Impl<_Type>( 
-            result, std::make_index_sequence<sizeof( _Type )>{} 
+        return details::_GetFieldsCount_Impl<_Type>( 
+            std::make_index_sequence<sizeof( _Type )>{} 
         );
-        return result;
     }
 
     template<
         typename _Type /* Type to count fields in */
     > constexpr size_t GetFieldsCount( 
         const _Type& /* obj */ /* For implicit template parameter deduction */ 
-    )
-        noexcept
+    ) noexcept
     {
         REFLECTION_CHECK_TYPE( _Type );
 
-        size_t result;
-        details::_GetFieldsCount_Impl<_Type>( 
-            result, std::make_index_sequence<sizeof( _Type )>{} 
+        return details::_GetFieldsCount_Impl<_Type>( 
+            std::make_index_sequence<sizeof( _Type )>{} 
         );
-        return result;
     }
 
 } // reflection

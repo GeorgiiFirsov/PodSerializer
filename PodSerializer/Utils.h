@@ -2,6 +2,8 @@
 
 #include "pch.h"
 
+#define use_as_return_type( __Type ) __Type{}
+
 //
 // Type passed to functions in reflection functions should be pod, but not fundamental
 // 
@@ -51,14 +53,17 @@ namespace utils {
     {
         template<
             typename _Type /* Type to be initialized */
-        > constexpr operator _Type() 
-            const noexcept( std::is_nothrow_constructible<_Type>::value )
-        { 
-            return _Type{}; 
-        }
-    };
+        > constexpr operator _Type&() const noexcept;
+	};
 
-    /************************************************************************************/
+	/************************************************************************************/
+
+	template<
+		typename _Type
+	> struct is_possible_to_construct_helper
+	{ static constexpr bool value = true; };
+
+	/************************************************************************************/
 
     //
     // Fundamental types registration

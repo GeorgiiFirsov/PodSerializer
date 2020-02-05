@@ -58,7 +58,7 @@ namespace reflection {
      ************************************************************************************/
 
     template<
-        typename _Type
+        typename _Type /* Type to convert into ids array */
     > constexpr auto GetTypeIds() noexcept( std::is_nothrow_constructible<_Type>::value )
     {
         REFLECTION_CHECK_TYPE(_Type);
@@ -69,7 +69,7 @@ namespace reflection {
     }
 
     template<
-        typename _Type
+        typename _Type /* Type to convert into ids array */
     > constexpr auto GetTypeIds(
         const _Type& /* obj */ /* For implicit template parameter deduction */
     ) noexcept( std::is_nothrow_constructible<_Type>::value )

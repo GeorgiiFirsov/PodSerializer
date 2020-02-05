@@ -59,7 +59,7 @@ namespace utils {
     {
         template<
             typename _Type /* Type to be initialized */
-        > constexpr operator _Type&() const noexcept;
+        > constexpr operator _Type&() const noexcept; // Not implemented - it's ok :)
     };
 
     /************************************************************************************/
@@ -126,9 +126,8 @@ namespace utils {
     //
     // Class that represents an array with compile-time features
     // 
-    template<
-        size_t _Size
-    > class SizeTArray final
+    template<size_t _Size> 
+    class SizeTArray final
     {
     public:
         size_t data[_Size];
@@ -149,8 +148,8 @@ namespace utils {
     // Indexed access to compile-time array
     // 
     template<
-        size_t _Idx,
-        size_t _Size
+        size_t _Idx  /* Index of element to get */,
+        size_t _Size /* Size of array */
     > constexpr size_t get( const SizeTArray<_Size>& array )
     {
         static_assert( _Idx < _Size, "Out of range in " __FUNCTION__ );

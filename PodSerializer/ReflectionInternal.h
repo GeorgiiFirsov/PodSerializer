@@ -3,6 +3,7 @@
 #include "pch.h"
 
 #include "Utils.h"
+#include "Tuple.h"
 
 namespace reflection {
 namespace details {
@@ -61,13 +62,53 @@ namespace details {
     > constexpr auto _GetTypeIds_Impl( std::index_sequence<_Idxs...> /* indices */ ) 
         noexcept( std::is_nothrow_constructible<_Type>::value )
     {
-        constexpr utils::SizeTArray<sizeof...( _Idxs )> ids{ { 0 } };
+        using utils::SizeTArray;
+        using utils::_IndexedUniversalInit;
+
+        constexpr SizeTArray<sizeof...( _Idxs )> ids{ { 0 } };
 
         //
         // Here we write ids into array by creating temporary object.
         // 
-        _Type temporary{ utils::_IndexedUniversalInit<_Idxs>{ const_cast<size_t*>( ids.data ) }... };
+        _Type temporary{ _IndexedUniversalInit<_Idxs>{ const_cast<size_t*>( ids.data ) }... };
         return ids;
+    }
+
+    /************************************************************************************/
+
+    template<
+        typename  _Type /* Type to convert into a tuple */,
+        size_t... _Idxs /* Indices */
+    > constexpr auto _ToTuple_Impl( 
+        _Type& obj /* Object to convert into a structure */, 
+        std::index_sequence<_Idxs...> /* indices */ 
+    )
+    {
+        using utils::SizeT;
+        using utils::get;
+        using utils::_GetTypeById;
+
+        // 
+        // Array with ids of types in structure. It is important
+        // to ensure it to be constexpr.
+        // 
+        constexpr auto ids = _GetTypeIds_Impl<_Type>( 
+            std::make_index_sequence<sizeof...( _Idxs )>{} 
+        );
+
+        using return_t = types::Tuple<
+            /* Walk through all saved ids of tupes and convert back them to types.
+             * Until this time it was extremely important to do all our manipulations
+             * in compile-time, bacause types, passes to tuple should be known now. */
+            decltype( _GetTypeById( SizeT<get<_Idxs>( ids )>{} ) )...
+        >;
+
+        //
+        // Bad black magic }-)
+        // Just trust me here - tuple and passed structure have the same layout,
+        // but can not be casted to each other directly.
+        // 
+        return *(return_t*)( &obj );
     }
 
 } // details

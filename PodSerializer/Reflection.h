@@ -59,7 +59,7 @@ namespace reflection {
 
     template<
         typename _Type /* Type to convert into ids array */
-    > constexpr auto GetTypeIds() noexcept( std::is_nothrow_constructible<_Type>::value )
+    > constexpr decltype(auto) GetTypeIds() noexcept( std::is_nothrow_constructible<_Type>::value )
     {
         REFLECTION_CHECK_TYPE(_Type);
 
@@ -70,7 +70,7 @@ namespace reflection {
 
     template<
         typename _Type /* Type to convert into ids array */
-    > constexpr auto GetTypeIds(
+    > constexpr decltype(auto) GetTypeIds(
         const _Type& /* obj */ /* For implicit template parameter deduction */
     ) noexcept( std::is_nothrow_constructible<_Type>::value )
     {
@@ -78,6 +78,29 @@ namespace reflection {
 
         return details::_GetTypeIds_Impl<_Type>( 
             std::make_index_sequence<GetFieldsCount<_Type>()>{} 
+        );
+    }
+
+
+    /************************************************************************************
+     * ToTuple function
+     * 
+     * The key-concept is following:
+     *  - Convert built inside array of ids of types into types back and use them to 
+     *    initialize tuple
+     *    
+     ************************************************************************************/
+
+    template<typename _Type> 
+    constexpr /* Maybe it is possible to construct our tuple in compile-time */
+    decltype(auto) ToTuple( 
+         const _Type& obj /* Object to convert into tuple */
+    )
+    {
+        REFLECTION_CHECK_TYPE( _Type );
+
+        return details::_ToTuple_Impl( 
+            obj, std::make_index_sequence<GetFieldsCount<_Type>()>{} 
         );
     }
 

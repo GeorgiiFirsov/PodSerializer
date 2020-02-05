@@ -46,4 +46,39 @@ namespace reflection {
         );
     }
 
+
+    /************************************************************************************
+     * GetTypeIds function
+     * 
+     * The key-concept is following:
+     *  - We register all fundamental types explicitly
+     *  - Due to registration we have mapping between types and integers
+     *  - These functions return compile-time arrays of those integers.
+     *    
+     ************************************************************************************/
+
+    template<
+        typename _Type
+    > constexpr auto GetTypeIds() noexcept( std::is_nothrow_constructible<_Type>::value )
+    {
+        REFLECTION_CHECK_TYPE(_Type);
+
+        return details::_GetTypeIds_Impl<_Type>( 
+            std::make_index_sequence<GetFieldsCount<_Type>()>{} 
+        );
+    }
+
+    template<
+        typename _Type
+    > constexpr auto GetTypeIds(
+        const _Type& /* obj */ /* For implicit template parameter deduction */
+    ) noexcept( std::is_nothrow_constructible<_Type>::value )
+    {
+        REFLECTION_CHECK_TYPE( _Type );
+
+        return details::_GetTypeIds_Impl<_Type>( 
+            std::make_index_sequence<GetFieldsCount<_Type>()>{} 
+        );
+    }
+
 } // reflection

@@ -55,5 +55,22 @@ namespace details {
 
     /************************************************************************************/
 
+    template<
+        typename  _Type  /* Type to return ids for */,
+        size_t... _Idxs  /* Indices */
+    > constexpr auto _GetTypeIds_Impl(  
+        std::index_sequence<_Idxs...> /* indices */ /* unused */
+    ) 
+        noexcept( std::is_nothrow_constructible<_Type>::value )
+    {
+        constexpr utils::SizeTArray<sizeof...( _Idxs )> ids{ { 0 } };
+
+        //
+        // Here we write ids into array by creating temporary object.
+        // 
+        _Type temporary{ utils::_IndexedUniversalInit<_Idxs>{ const_cast<size_t*>( ids.data ) }... };
+        return ids;
+    }
+
 } // details
 } // reflection

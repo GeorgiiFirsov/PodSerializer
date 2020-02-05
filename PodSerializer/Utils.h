@@ -20,8 +20,14 @@
 // 
 #define REFLECTION_REGISTER_TYPE( _Type, _Integer )                                                   \
     constexpr inline size_t _GetIdByType( utils::IdenticalType<_Type> ) noexcept { return _Integer; } \
-    constexpr inline _Type  _GetTypeById( utils::SizeT<_Integer> ) noexcept { _Type result{}; return result; }
+    constexpr inline _Type  _GetTypeById( utils::SizeT<_Integer> ) noexcept { constexpr _Type result{}; return result; }
 
+//
+// Macro that produces compilation error with specified message
+// 
+#define ENFORCE_COMPILER_ERROR( _Message ) static_assert( false, #_Message )
+
+namespace reflection {
 namespace utils {
 
     /************************************************************************************/
@@ -104,10 +110,52 @@ namespace utils {
             typename _Type /* Type to be initialized and indexed */
         > constexpr operator _Type() 
             const noexcept( std::is_nothrow_constructible<_Type>::value )
-        { 
-            pTypeIds[_Idx] = _GetIdByType( IdenticalType<_Type>{} );
+        {
+            //
+            // It is necessary to cast constness away, because our
+            // calculations are performed in compile-time with constant
+            // expressions.
+            // 
+            const_cast<size_t*>( pTypeIds )[_Idx] = _GetIdByType( IdenticalType<_Type>{} );
             return _Type{}; 
         }
     };
 
+    /************************************************************************************/
+
+    //
+    // Class that represents an array with compile-time features
+    // 
+    template<
+        size_t _Size
+    > class SizeTArray final
+    {
+    public:
+        size_t data[_Size];
+        static constexpr size_t size() noexcept { return _Size; }
+    };
+
+    template<>
+    class SizeTArray<0> final
+    {
+    public:
+        size_t data[1]; /* Zero sized arrays are not allowed */
+        static constexpr size_t size() noexcept { return 0; }
+    };
+
+    #define array_data( _Array ) _Array.data
+
+    //
+    // Indexed access to compile-time array
+    // 
+    template<
+        size_t _Idx,
+        size_t _Size
+    > constexpr size_t get( const SizeTArray<_Size>& array )
+    {
+        static_assert( _Idx < _Size, "Out of range in " __FUNCTION__ );
+        return array.data[_Idx];
+    }
+
 } // utils
+} // refletion

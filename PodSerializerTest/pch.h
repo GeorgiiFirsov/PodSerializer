@@ -16,6 +16,7 @@
 // 
 #include "../PodSerializer/Reflection.h"
 #include "../PodSerializer/ReflectionInternal.h"
+#include "../PodSerializer/Serialization.h"
 
 
 //
@@ -23,3 +24,4 @@
 //  
 using reflection::GetFieldsCount;
 using reflection::ToTuple;
+using serialization::operator <<;

@@ -71,56 +71,66 @@ namespace {
     // It is necessary to implement it for all modifications of _Type.
     // 
     
+    //
     // lvalue reference
+    // 
     template<
         size_t   _Idx  /* Index of element */,
         typename _Type /* Type of element */
     > constexpr _Type& _get_Impl( _ValueContainer<_Idx, _Type>& container ) noexcept
     {
+        //
+        // Just return stored value.
+        // 
         return container.value;
     }
 
+    //
     // const lvalue reference
-    template<
-        size_t   _Idx  /* Index of element */,
-        typename _Type /* Type of element */
-    > constexpr const _Type& _get_Impl( const _ValueContainer<_Idx, _Type>& container ) noexcept
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t _Idx, typename _Type> 
+    constexpr const _Type& _get_Impl( const _ValueContainer<_Idx, _Type>& container ) noexcept
     {
         return container.value;
     }
     
+    //
     // volatile lvalue reference
-    template<
-        size_t   _Idx  /* Index of element */,
-        typename _Type /* Type of element */
-    > constexpr volatile _Type& _get_Impl( volatile _ValueContainer<_Idx, _Type>& container ) noexcept
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t _Idx, typename _Type> 
+    constexpr volatile _Type& _get_Impl( volatile _ValueContainer<_Idx, _Type>& container ) noexcept
     {
         return container.value;
     }
 
+    //
     // const volatile lvalue reference
-    template<
-        size_t   _Idx  /* Index of element */,
-        typename _Type /* Type of element */
-    > constexpr const volatile _Type& _get_Impl( const volatile _ValueContainer<_Idx, _Type>& container ) noexcept
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t _Idx, typename _Type> 
+    constexpr const volatile _Type& _get_Impl( const volatile _ValueContainer<_Idx, _Type>& container ) noexcept
     {
         return container.value;
     }
 
+    //
     // rvalue reference
-    template<
-        size_t   _Idx  /* Index of element */,
-        typename _Type /* Type of element */
-    > constexpr _Type&& _get_Impl( _ValueContainer<_Idx, _Type>&& container ) noexcept
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t _Idx, typename _Type> 
+    constexpr _Type&& _get_Impl( _ValueContainer<_Idx, _Type>&& container ) noexcept
     {
         return container.value;
     }
 
 } // anonymous namespace
 
+    /************************************************************************************/
 
     //
-    // Tuple and get to use in application
+    // Tuple that you can use in application
     // 
     template<typename... _Types>
     struct Tuple
@@ -135,13 +145,29 @@ namespace {
         >::_Tuple_Impl;
     };
 
-    template<size_t _Idx, typename... _Types>
+    /************************************************************************************/
+
+    //
+    // 'get' template that you can use in app
+    // 
+
+    //
+    // lvalue reference
+    // 
+    template<
+        size_t      _Idx   /* Index to retreive value at */, 
+        typename... _Types /* Types stored in tuple */
+    >
     constexpr decltype(auto) get( Tuple<_Types...>& tpl ) noexcept
     {
         static_assert( _Idx < Tuple<_Types...>::size, "Out of range in " __FUNCTION__ );
         return _get_Impl<_Idx>( tpl );
     }
 
+    //
+    // const lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
     template<size_t _Idx, typename... _Types>
     constexpr decltype(auto) get( const Tuple<_Types...>& tpl ) noexcept
     {
@@ -149,6 +175,10 @@ namespace {
         return _get_Impl<_Idx>( tpl );
     }
 
+    //
+    // volatile lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
     template<size_t _Idx, typename... _Types>
     constexpr decltype(auto) get( volatile Tuple<_Types...>& tpl ) noexcept
     {
@@ -156,6 +186,10 @@ namespace {
         return _get_Impl<_Idx>( tpl );
     }
 
+    //
+    // const volatile lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
     template<size_t _Idx, typename... _Types>
     constexpr decltype(auto) get( const volatile Tuple<_Types...>& tpl ) noexcept
     {
@@ -163,11 +197,133 @@ namespace {
         return _get_Impl<_Idx>( tpl );
     }
 
+    //
+    // rvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
     template<size_t _Idx, typename... _Types>
     constexpr decltype(auto) get( Tuple<_Types...>&& tpl ) noexcept
     {
         static_assert( _Idx < Tuple<_Types...>::size, "Out of range in " __FUNCTION__ );
-        return _get_Impl<_Idx>( tpl );
+        return _get_Impl<_Idx>( 
+            std::forward<Tuple<_Types...>>( tpl ) 
+        );
+    }
+
+    /************************************************************************************/
+
+    //
+    // 'for_each' for tuple that you can use.
+    // There are several implementations again.
+    // 
+    
+    //
+    // lvalue reference
+    // 
+    template<
+        size_t   _Idx = 0 /* Index of current element in tuple */,
+        typename _Func    /* Type of generic function */, 
+        typename _Tuple   /* Types stored in tuple */
+    > 
+    /* This instantiation will be called in case of first invalid
+     * index. After that no other instantiations will be compiled. */
+    constexpr typename std::enable_if<_Idx == _Tuple::size>::type
+    for_each( _Tuple& /* tpl */, _Func&& /* fn */ ) noexcept
+    { 
+        /* Empty one. Just placeholder. */ 
+    }
+
+    template<
+        size_t   _Idx = 0 /* Index of current element in tuple */,
+        typename _Func    /* Type of generic function */, 
+        typename _Tuple   /* Types stored in tuple */
+    > 
+    /* This instantiation will be called in case of valid indexes. */
+    constexpr typename std::enable_if<_Idx < _Tuple::size>::type 
+    for_each( _Tuple& tpl, _Func&& fn )
+    {
+        //
+        // Call function with current element and recursively
+        // invoke 'for_each' with incremented index.
+        // 
+        std::forward<_Func>( fn )( get<_Idx>( tpl ) );
+        for_each<_Idx + 1>( tpl, std::forward<_Func>( fn ) );
+    }
+    
+    //
+    // const lvalue reference.
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t _Idx = 0, typename _Func, typename _Tuple>
+    constexpr typename std::enable_if<_Idx == _Tuple::size>::type
+    for_each( const _Tuple& /* tpl */, _Func&& /* fn */ ) noexcept
+    { 
+        /* Empty one. Just placeholder. */ 
+    }
+
+    template<size_t _Idx = 0, typename _Func, typename _Tuple>
+    constexpr typename std::enable_if<_Idx < _Tuple::size>::type 
+    for_each( const _Tuple& tpl, _Func&& fn )
+    {
+        std::forward<_Func>( fn )( get<_Idx>( tpl ) );
+        for_each<_Idx + 1>( tpl, std::forward<_Func>( fn ) );
+    }
+    
+    //
+    // volatile lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t _Idx = 0, typename _Func, typename _Tuple>
+    constexpr typename std::enable_if<_Idx == _Tuple::size>::type
+    for_each( volatile _Tuple& /* tpl */, _Func&& /* fn */ ) noexcept
+    { 
+        /* Empty one. Just placeholder. */ 
+    }
+
+    template<size_t _Idx = 0, typename _Func, typename _Tuple>
+    constexpr typename std::enable_if<_Idx < _Tuple::size>::type 
+    for_each( volatile _Tuple& tpl, _Func&& fn )
+    {
+        std::forward<_Func>( fn )( get<_Idx>( tpl ) );
+        for_each<_Idx + 1>( tpl, std::forward<_Func>( fn ) );
+    }
+    
+    //
+    // const volatile lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t _Idx = 0, typename _Func, typename _Tuple>
+    constexpr typename std::enable_if<_Idx == _Tuple::size>::type
+    for_each( const volatile _Tuple& /* tpl */, _Func&& /* fn */ ) noexcept
+    { 
+        /* Empty one. Just placeholder. */ 
+    }
+
+    template<size_t _Idx = 0, typename _Func, typename _Tuple>
+    constexpr typename std::enable_if<_Idx < _Tuple::size>::type 
+    for_each( const volatile _Tuple& tpl, _Func&& fn )
+    {
+        std::forward<_Func>( fn )( get<_Idx>( tpl ) );
+        for_each<_Idx + 1>( tpl, std::forward<_Func>( fn ) );
+    }
+    
+    //
+    // rvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t _Idx = 0, typename _Func, typename _Tuple>
+    constexpr typename std::enable_if<_Idx == _Tuple::size>::type
+    for_each( _Tuple&& /* tpl */, _Func&& /* fn */ ) noexcept
+    { 
+        /* Empty one. Just placeholder. */ 
+    }
+
+    template<size_t _Idx = 0, typename _Func, typename _Tuple>
+    constexpr typename std::enable_if<_Idx < _Tuple::size>::type 
+    for_each( _Tuple&& tpl, _Func&& fn )
+    {
+        std::forward<_Func>( fn )( get<_Idx>( std::forward<_Tuple>( tpl ) ) );
+        for_each<_Idx + 1>( std::forward<_Tuple>( tpl ), std::forward<_Func>( fn ) );
     }
 
 } // types

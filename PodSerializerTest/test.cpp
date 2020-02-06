@@ -96,6 +96,24 @@ TEST(ToTuple, Correctness)
     EXPECT_EQ(    9, types::get< 9>( ten_tpl ) );
 }
 
+TEST(Serialization, StreamCout)
+{
+    std::cout << "It is a visual test.\n" << std::endl;
+
+    TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
+
+    std::cout << ten_fields << std::endl;
+}
+
+TEST(Serialization, StreamWcout)
+{
+    std::wcout << L"It is a visual test.\n" << std::endl;
+
+    TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
+
+    std::wcout << ten_fields << std::endl;
+}
+
 #if TS_ENABLE_UNCOMPILABLE
 
     TEST(GetFieldsCount, Uncompilable_ExplicitTemplate)

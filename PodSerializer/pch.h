@@ -1,6 +1,6 @@
 #pragma once
 
 // STL headers
-#include <tuple>
+#include <ostream>
 #include <type_traits>
 #include <utility>

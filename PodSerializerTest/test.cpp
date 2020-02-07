@@ -96,7 +96,7 @@ TEST(ToTuple, Correctness)
     EXPECT_EQ( types::get< 9>( ten_tpl ), 9    );
 }
 
-TEST(Serialization, StreamCout)
+TEST(Serialization, DirectStreamCout)
 {
     std::cout << "It is a visual test.\n" << std::endl;
 
@@ -105,7 +105,7 @@ TEST(Serialization, StreamCout)
     std::cout << ten_fields << std::endl;
 }
 
-TEST(Serialization, StreamWcout)
+TEST(Serialization, DirectStreamWcout)
 {
     std::wcout << L"It is a visual test.\n" << std::endl;
 
@@ -120,6 +120,54 @@ TEST(Serialization, Binary)
 
     BinarySerializer<TwoFields> serializer;
     BinaryBuffer<TwoFields> buffer;
+
+    EXPECT_TRUE( buffer.IsEmpty() );
+
+    serializer.Serialize( original, buffer );
+
+    EXPECT_FALSE( buffer.IsEmpty() );
+
+    TwoFields loaded{ 0, 0 };
+
+    EXPECT_NE( loaded.field1, original.field1 );
+    EXPECT_NE( loaded.field2, original.field2 );
+
+    serializer.Deserialize( loaded, buffer );
+
+    EXPECT_EQ( loaded.field1, original.field1 );
+    EXPECT_EQ( loaded.field2, original.field2 );
+}
+
+TEST(Serialization, StringStream)
+{
+    TwoFields original{ 2, 4 };
+
+    StringStreamSerializer<TwoFields> serializer;
+    StringStreamBuffer<TwoFields> buffer;
+
+    EXPECT_TRUE( buffer.IsEmpty() );
+
+    serializer.Serialize( original, buffer );
+
+    EXPECT_FALSE( buffer.IsEmpty() );
+
+    TwoFields loaded{ 0, 0 };
+
+    EXPECT_NE( loaded.field1, original.field1 );
+    EXPECT_NE( loaded.field2, original.field2 );
+
+    serializer.Deserialize( loaded, buffer );
+
+    EXPECT_EQ( loaded.field1, original.field1 );
+    EXPECT_EQ( loaded.field2, original.field2 );
+}
+
+TEST(Serialization, WStringStream)
+{
+    TwoFields original{ 2, 4 };
+
+    WStringStreamSerializer<TwoFields> serializer;
+    WStringStreamBuffer<TwoFields> buffer;
 
     EXPECT_TRUE( buffer.IsEmpty() );
 

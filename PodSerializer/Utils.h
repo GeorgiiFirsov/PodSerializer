@@ -68,15 +68,15 @@ namespace utils {
     // Fundamental types registration
     // 
 
-    REFLECTION_REGISTER_TYPE( unsigned char       , 1  );
-    REFLECTION_REGISTER_TYPE( unsigned short      , 2  );
-    REFLECTION_REGISTER_TYPE( unsigned int        , 3  );
-    REFLECTION_REGISTER_TYPE( unsigned long       , 4  );
-    REFLECTION_REGISTER_TYPE( unsigned long long  , 5  );
-    REFLECTION_REGISTER_TYPE( signed char         , 6  );
-    REFLECTION_REGISTER_TYPE( short               , 7  );
-    REFLECTION_REGISTER_TYPE( int                 , 8  );
-    REFLECTION_REGISTER_TYPE( long                , 9  );
+    REFLECTION_REGISTER_TYPE( unsigned char       ,  1 );
+    REFLECTION_REGISTER_TYPE( unsigned short      ,  2 );
+    REFLECTION_REGISTER_TYPE( unsigned int        ,  3 );
+    REFLECTION_REGISTER_TYPE( unsigned long       ,  4 );
+    REFLECTION_REGISTER_TYPE( unsigned long long  ,  5 );
+    REFLECTION_REGISTER_TYPE( signed char         ,  6 );
+    REFLECTION_REGISTER_TYPE( short               ,  7 );
+    REFLECTION_REGISTER_TYPE( int                 ,  8 );
+    REFLECTION_REGISTER_TYPE( long                ,  9 );
     REFLECTION_REGISTER_TYPE( long long           , 10 );
     REFLECTION_REGISTER_TYPE( char                , 11 );
     REFLECTION_REGISTER_TYPE( wchar_t             , 12 );

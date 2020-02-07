@@ -1,7 +1,7 @@
 #pragma once
 
 // STL headers
-#include <ostream>
+#include <sstream>
 #include <type_traits>
 #include <utility>
 #include <vector>

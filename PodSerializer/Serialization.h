@@ -87,8 +87,24 @@ namespace serialization {
 
     /************************************************************************************/
 
+    //
+    // Binary serializer alias
+    // 
+
     template<typename _Type>
     using BinarySerializer = BasicSerializer<_Type, BinaryBuffer>;
+
+    /************************************************************************************/
+
+    //
+    // Stream serializer aliases
+    // 
+
+    template<typename _Type>
+    using StringStreamSerializer = BasicSerializer<_Type, StringStreamBuffer>;
+
+    template<typename _Type>
+    using WStringStreamSerializer = BasicSerializer<_Type, WStringStreamBuffer>;
 
 } // serialization
 

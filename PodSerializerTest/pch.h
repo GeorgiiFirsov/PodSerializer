@@ -24,5 +24,12 @@
 //  
 using reflection::GetFieldsCount;
 using reflection::ToTuple;
+
 using serialization::BinarySerializer;
 using serialization::BinaryBuffer;
+
+using serialization::StringStreamSerializer;
+using serialization::StringStreamBuffer;
+
+using serialization::WStringStreamSerializer;
+using serialization::WStringStreamBuffer;

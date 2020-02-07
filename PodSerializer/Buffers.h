@@ -78,7 +78,7 @@ namespace serialization {
 
         void Load( value_t& obj )
         {
-			using reflection::GetFieldsCount;
+            using reflection::GetFieldsCount;
 
             //
             // Check if buffer contains a value.
@@ -87,50 +87,50 @@ namespace serialization {
                 throw std::logic_error( "Buffer is empty" );
             }
 
-			_Load_Impl( 
-				obj, std::make_index_sequence<GetFieldsCount<value_t>()>{} 
-			);
+            _Load_Impl( 
+                obj, std::make_index_sequence<GetFieldsCount<value_t>()>{} 
+            );
         }
 
-	private:
-		template<
-			size_t... _Idxs /* Indices */
-		> void _Load_Impl( value_t& obj, std::index_sequence<_Idxs...> /* indices */ )
-		{
-			using reflection::utils::SizeT;
-			using reflection::utils::_GetTypeById;
-			using reflection::GetTypeIds;
-			using reflection::FromTuple;
-			using types::Tuple;
-			using types::get;
+    private:
+        template<
+            size_t... _Idxs /* Indices */
+        > void _Load_Impl( value_t& obj, std::index_sequence<_Idxs...> /* indices */ )
+        {
+            using reflection::utils::SizeT;
+            using reflection::utils::_GetTypeById;
+            using reflection::GetTypeIds;
+            using reflection::FromTuple;
+            using types::Tuple;
+            using types::get;
 
-			//
-			// Here we need to know types, stored in storage
-			// 
-			constexpr auto ids = GetTypeIds<value_t>();
-			using tuple_t = Tuple< decltype( _GetTypeById( SizeT<get<_Idxs>( ids )>{} ) )... >;
+            //
+            // Here we need to know types, stored in storage
+            // 
+            constexpr auto ids = GetTypeIds<value_t>();
+            using tuple_t = Tuple< decltype( _GetTypeById( SizeT<get<_Idxs>( ids )>{} ) )... >;
 
-			//
-			// Now put stored values into tuple
-			// 
-			tuple_t buffer_view;
-			size_t offset = 0;
+            //
+            // Now put stored values into tuple
+            // 
+            tuple_t buffer_view;
+            size_t offset = 0;
 
-			auto PutToTuple = [&offset, buffer = m_buffer.data()]( auto& /* non-const lvalue!!! */ element )
-			{
-				using element_t = typename std::decay<decltype( element )>::type;
+            auto PutToTuple = [&offset, buffer = m_buffer.data()]( auto& /* non-const lvalue!!! */ element )
+            {
+                using element_t = typename std::decay<decltype( element )>::type;
 
-				element = *reinterpret_cast<element_t*>( buffer + offset );
-				offset += sizeof( element );
-			};
+                element = *reinterpret_cast<element_t*>( buffer + offset );
+                offset += sizeof( element );
+            };
 
-			types::for_each( buffer_view, PutToTuple );
+            types::for_each( buffer_view, PutToTuple );
 
-			//
-			// And finally convert tuple into an object.
-			// 
-			obj = FromTuple<value_t>( buffer_view );
-		}
+            //
+            // And finally convert tuple into an object.
+            // 
+            obj = FromTuple<value_t>( buffer_view );
+        }
 
     private:
 

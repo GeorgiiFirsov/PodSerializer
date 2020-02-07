@@ -72,20 +72,17 @@ namespace serialization {
 
         template<
             typename... _ArgsTypes /* Optional parameters' types */
-        > constexpr void Serialize( const _Type& obj, _ArgsTypes&&... args ) 
+        > constexpr void Serialize( const _Type& obj, buffer_t& buffer, _ArgsTypes&&... args ) 
         { 
-            m_buffer.Save( obj, std::forward<_ArgsTypes>( args )... ); 
+            buffer.Save( obj, std::forward<_ArgsTypes>( args )... ); 
         }
 
         template<
             typename... _ArgsTypes /* Optional parameters' types */
-        > constexpr void Deserialize( _Type& obj, _ArgsTypes&&... args )
+        > constexpr void Deserialize( _Type& obj, buffer_t& buffer, _ArgsTypes&&... args )
         {
-            m_buffer.Load( obj, std::forward<_ArgsTypes>( args )... );
+            buffer.Load( obj, std::forward<_ArgsTypes>( args )... );
         }
-
-    private:
-        buffer_t m_buffer;
     };
 
     /************************************************************************************/

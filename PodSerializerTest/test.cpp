@@ -45,13 +45,13 @@
 TEST(GetFieldsCount, Correctness_ExplicitTemplate) 
 {
     EXPECT_EQ(
-        TwoFieldsCorrectAnswer,
-        GetFieldsCount<TwoFields>()
+        GetFieldsCount<TwoFields>(),
+        TwoFieldsCorrectAnswer
     );
 
     EXPECT_EQ(
-        TenFieldsCorrectAnswer,
-        GetFieldsCount<TenFields>()
+        GetFieldsCount<TenFields>(),
+        TenFieldsCorrectAnswer
     );
 }
 
@@ -61,13 +61,13 @@ TEST(GetFieldsCount, Correctness_ParameterPassing)
     TenFields ten_fields;
 
     EXPECT_EQ(
-        TwoFieldsCorrectAnswer,
-        GetFieldsCount( two_fields )
+        GetFieldsCount( two_fields ),
+        TwoFieldsCorrectAnswer
     );
 
     EXPECT_EQ(
-        TenFieldsCorrectAnswer,
-        GetFieldsCount( ten_fields )
+        GetFieldsCount( ten_fields ),
+        TenFieldsCorrectAnswer
     );
 }
 
@@ -77,23 +77,23 @@ TEST(ToTuple, Correctness)
 
     auto two_tpl = ToTuple( two_fields );
 
-    EXPECT_EQ( 2, types::get<0>( two_tpl ) );
-    EXPECT_EQ( 4, types::get<1>( two_tpl ) );
+    EXPECT_EQ( types::get<0>( two_tpl ), 2 );
+    EXPECT_EQ( types::get<1>( two_tpl ), 4 );
 
     TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
 
     auto ten_tpl = ToTuple( ten_fields );
 
-    EXPECT_EQ(  'a', types::get< 0>( ten_tpl ) );
-    EXPECT_EQ(   25, types::get< 1>( ten_tpl ) );
-    EXPECT_EQ(    4, types::get< 2>( ten_tpl ) );
-    EXPECT_EQ( 3.14, types::get< 3>( ten_tpl ) );
-    EXPECT_EQ(    0, types::get< 4>( ten_tpl ) );
-    EXPECT_EQ(  'b', types::get< 5>( ten_tpl ) );
-    EXPECT_EQ(   54, types::get< 6>( ten_tpl ) );
-    EXPECT_EQ(   32, types::get< 7>( ten_tpl ) );
-    EXPECT_EQ( 2.71, types::get< 8>( ten_tpl ) );
-    EXPECT_EQ(    9, types::get< 9>( ten_tpl ) );
+    EXPECT_EQ( types::get< 0>( ten_tpl ), 'a'  );
+    EXPECT_EQ( types::get< 1>( ten_tpl ), 25   );
+    EXPECT_EQ( types::get< 2>( ten_tpl ), 4    );
+    EXPECT_EQ( types::get< 3>( ten_tpl ), 3.14 );
+    EXPECT_EQ( types::get< 4>( ten_tpl ), 0    );
+    EXPECT_EQ( types::get< 5>( ten_tpl ), 'b'  );
+    EXPECT_EQ( types::get< 6>( ten_tpl ), 54   );
+    EXPECT_EQ( types::get< 7>( ten_tpl ), 32   );
+    EXPECT_EQ( types::get< 8>( ten_tpl ), 2.71 );
+    EXPECT_EQ( types::get< 9>( ten_tpl ), 9    );
 }
 
 TEST(Serialization, StreamCout)
@@ -119,15 +119,20 @@ TEST(Serialization, Binary)
     TwoFields original{ 2, 4 };
 
     BinarySerializer<TwoFields> serializer;
+    BinaryBuffer<TwoFields> buffer;
 
-    serializer.Serialize( original );
+    EXPECT_TRUE( buffer.IsEmpty() );
+
+    serializer.Serialize( original, buffer );
+
+    EXPECT_FALSE( buffer.IsEmpty() );
 
     TwoFields loaded{ 0, 0 };
 
     EXPECT_NE( loaded.field1, original.field1 );
     EXPECT_NE( loaded.field2, original.field2 );
 
-    serializer.Deserialize( loaded );
+    serializer.Deserialize( loaded, buffer );
 
     EXPECT_EQ( loaded.field1, original.field1 );
     EXPECT_EQ( loaded.field2, original.field2 );

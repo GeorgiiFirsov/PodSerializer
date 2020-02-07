@@ -25,3 +25,4 @@
 using reflection::GetFieldsCount;
 using reflection::ToTuple;
 using serialization::BinarySerializer;
+using serialization::BinaryBuffer;

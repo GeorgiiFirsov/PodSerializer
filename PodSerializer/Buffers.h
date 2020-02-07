@@ -33,7 +33,7 @@ namespace serialization {
         BinaryBuffer( BinaryBuffer<_Type>&& ) = default;
         BinaryBuffer& operator= ( BinaryBuffer<_Type>&& ) = default;
 
-        void IsEmpty()
+        bool IsEmpty()
         {
             return !m_isFull;
         }
@@ -83,7 +83,7 @@ namespace serialization {
             //
             // Check if buffer contains a value.
             // 
-            if (!m_isFull) {
+            if (IsEmpty()) {
                 throw std::logic_error( "Buffer is empty" );
             }
 

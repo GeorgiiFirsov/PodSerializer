@@ -155,14 +155,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Buffers.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Reflection.h" />
     <ClInclude Include="ReflectionInternal.h" />
     <ClInclude Include="Serialization.h" />
+    <ClInclude Include="SizeTArray.h" />
     <ClInclude Include="Tuple.h" />
     <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Buffers.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -172,6 +175,7 @@
     <ClCompile Include="Reflection.cpp" />
     <ClCompile Include="ReflectionInternal.cpp" />
     <ClCompile Include="Serialization.cpp" />
+    <ClCompile Include="SizeTArray.cpp" />
     <ClCompile Include="Tuple.cpp" />
     <ClCompile Include="Utils.cpp" />
   </ItemGroup>

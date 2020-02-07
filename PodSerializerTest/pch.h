@@ -24,4 +24,4 @@
 //  
 using reflection::GetFieldsCount;
 using reflection::ToTuple;
-using serialization::operator <<;
+using serialization::BinarySerializer;

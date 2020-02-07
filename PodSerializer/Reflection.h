@@ -4,6 +4,7 @@
 
 #include "ReflectionInternal.h"
 
+
 namespace reflection {
 
     /************************************************************************************
@@ -101,6 +102,28 @@ namespace reflection {
 
         return details::_ToTuple_Impl( 
             obj, std::make_index_sequence<GetFieldsCount<_Type>()>{} 
+        );
+    }
+
+
+    /************************************************************************************
+     * FromTuple function
+     * 
+     * The key-concept is following:
+     *  - Walk through all tuple elements using pack-expansion and initialize return
+     *    value with values of these elements.
+     *    
+     ************************************************************************************/
+
+    template<typename _Type, typename... _Types>
+    constexpr _Type FromTuple(
+        const types::Tuple<_Types...>& tpl
+    ) noexcept( std::is_nothrow_constructible<_Type, _Types...>::value )
+    {
+        REFLECTION_CHECK_TYPE( _Type );
+
+        return details::_FromTuple_Impl<_Type>( 
+            tpl, std::make_index_sequence<sizeof...( _Types )>{} 
         );
     }
 

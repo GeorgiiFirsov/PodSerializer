@@ -114,6 +114,25 @@ TEST(Serialization, StreamWcout)
     std::wcout << ten_fields << std::endl;
 }
 
+TEST(Serialization, Binary)
+{
+	TwoFields original{ 2, 4 };
+
+	BinarySerializer<TwoFields> serializer;
+
+	serializer.Serialize( original );
+
+	TwoFields loaded{ 0, 0 };
+
+	EXPECT_NE( loaded.field1, original.field1 );
+	EXPECT_NE( loaded.field2, original.field2 );
+
+	serializer.Deserialize( loaded );
+
+	EXPECT_EQ( loaded.field1, original.field1 );
+	EXPECT_EQ( loaded.field2, original.field2 );
+}
+
 #if TS_ENABLE_UNCOMPILABLE
 
     TEST(GetFieldsCount, Uncompilable_ExplicitTemplate)

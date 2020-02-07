@@ -4,6 +4,7 @@
 
 #include "Utils.h"
 #include "Tuple.h"
+#include "SizeTArray.h"
 
 namespace reflection {
 namespace details {
@@ -62,7 +63,7 @@ namespace details {
     > constexpr auto _GetTypeIds_Impl( std::index_sequence<_Idxs...> /* indices */ ) 
         noexcept( std::is_nothrow_constructible<_Type>::value )
     {
-        using utils::SizeTArray;
+        using types::SizeTArray;
         using utils::_IndexedUniversalInit;
 
         constexpr SizeTArray<sizeof...( _Idxs )> ids{ { 0 } };
@@ -85,8 +86,8 @@ namespace details {
     )
     {
         using utils::SizeT;
-        using utils::get;
         using utils::_GetTypeById;
+        using types::get;
 
         // 
         // Array with ids of types in structure. It is important
@@ -109,6 +110,31 @@ namespace details {
         // but can not be casted to each other directly.
         // 
         return *(return_t*)( &obj );
+    }
+
+    /************************************************************************************/
+
+    template<
+        typename    _Type  /* Type to consruct from tuple */,
+        typename... _Types /* Types stored in tuple */,
+        size_t...   _Idxs  /* Indices */
+    > constexpr _Type _FromTuple_Impl( 
+        const types::Tuple<_Types...>& tpl /* Tuple to be converted into struct */, 
+        std::index_sequence<_Idxs...> /* indices */ 
+    ) noexcept( std::is_nothrow_constructible<_Type, _Types...>::value )
+    {
+        using types::get;
+        using reflection::GetFieldsCount;
+
+        static_assert( 
+            sizeof...( _Idxs ) == sizeof...( _Types ), 
+            "Types and indices amounts mismatch in " __FUNCTION__ 
+        );
+
+        //
+        // Simply construct object using aggregate initialization.
+        // 
+        return _Type{ get<_Idxs>( tpl )... };
     }
 
 } // details

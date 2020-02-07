@@ -26,7 +26,7 @@ template<
 
     auto obj_tpl = ToTuple( obj );
     auto FlushToStream = [&stream]( auto&& element ) {
-        stream << element << " ";
+        stream << std::forward<decltype( element )>( element ) << " ";
     };
 
     types::for_each( obj_tpl, FlushToStream );

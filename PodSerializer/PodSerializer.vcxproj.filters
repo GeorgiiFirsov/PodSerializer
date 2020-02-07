@@ -13,57 +13,75 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{a7d0c3b3-c48b-4e7f-8836-587c9a9ba45a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Serialization">
+      <UniqueIdentifier>{25926a49-ce9a-4868-9a37-be61ff16854b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Reflection">
+      <UniqueIdentifier>{fce503a6-e0a6-48c1-9ba5-0bb04e80f3c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{b71b15dc-1be0-4cf7-b7bf-8fc36fefa8bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Serialization">
+      <UniqueIdentifier>{53cec58a-094c-47cb-99be-c7b914be5953}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Reflection">
+      <UniqueIdentifier>{fa5ebf3d-9e4b-4d03-9300-525e1564afd8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ReflectionInternal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Reflection.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Tuple.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Buffers.h">
+      <Filter>Header Files\Serialization</Filter>
     </ClInclude>
     <ClInclude Include="Serialization.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Serialization</Filter>
     </ClInclude>
-    <ClInclude Include="Buffers.h">
-      <Filter>Header Files</Filter>
+    <ClInclude Include="Reflection.h">
+      <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectionInternal.h">
+      <Filter>Header Files\Reflection</Filter>
     </ClInclude>
     <ClInclude Include="SizeTArray.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Tuple.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Reflection.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ReflectionInternal.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Utils.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Tuple.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Buffers.cpp">
+      <Filter>Source Files\Serialization</Filter>
     </ClCompile>
     <ClCompile Include="Serialization.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Serialization</Filter>
     </ClCompile>
-    <ClCompile Include="Buffers.cpp">
-      <Filter>Source Files</Filter>
+    <ClCompile Include="Reflection.cpp">
+      <Filter>Source Files\Reflection</Filter>
+    </ClCompile>
+    <ClCompile Include="ReflectionInternal.cpp">
+      <Filter>Source Files\Reflection</Filter>
     </ClCompile>
     <ClCompile Include="SizeTArray.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Tuple.cpp">
+      <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

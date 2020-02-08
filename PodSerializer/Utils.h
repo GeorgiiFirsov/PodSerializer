@@ -121,7 +121,7 @@ namespace utils {
         > 
         constexpr void Assign( const _TypeId& ids ) const noexcept
         {
-            static_assert( false, __FUNCTION__ " is not permitted to use for now" );
+            static_assert( false, __FUNCTION__ " is not permitted to be used for now" );
             for (size_t i = 0; i < _TypeId::size(); ++i) 
             {
                 //

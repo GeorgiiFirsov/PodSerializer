@@ -71,7 +71,7 @@ namespace details {
         //
         // Here we write ids into array by creating temporary object.
         // 
-        _Type temporary{ _IndexedUniversalInit<_Idxs>{ const_cast<size_t*>( ids.data ) }... };
+        _Type temporary{ _IndexedUniversalInit<_Idxs>{ const_cast<size_t*>( ids.data + _Idxs ) }... };
         return ids;
     }
 

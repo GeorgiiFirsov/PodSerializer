@@ -106,9 +106,35 @@ namespace utils {
         // 
         size_t* pTypeIds;
 
+        constexpr void Assign( size_t id ) const noexcept
+        {
+            //
+            // It is necessary to cast constness away, because our
+            // calculations are performed in compile-time with constant
+            // expressions.
+            // 
+            const_cast<size_t*>( pTypeIds )[0] = id;
+        }
+
+        template<
+            typename _TypeId /* Type of container with type ids */
+        > 
+        constexpr void Assign( const _TypeId& ids ) const noexcept
+        {
+            static_assert( false, __FUNCTION__ " is not permitted to use for now" );
+            for (size_t i = 0; i < _TypeId::size(); ++i) 
+            {
+                //
+                // It is necessary here to cast constness away. 
+                // See explanation above.
+                // 
+                const_cast<size_t*>( pTypeIds )[i] = ids.data[i];
+            }
+        }
+
         template<
             typename _Type /* Type to be initialized and indexed */
-        > constexpr operator _Type() 
+        > constexpr operator _Type()
             const noexcept( std::is_nothrow_constructible<_Type>::value )
         {
             //
@@ -116,7 +142,8 @@ namespace utils {
             // calculations are performed in compile-time with constant
             // expressions.
             // 
-            const_cast<size_t*>( pTypeIds )[_Idx] = _GetIdByType( IdenticalType<_Type>{} );
+            constexpr auto ids = _GetIdByType( IdenticalType<_Type>{} );
+            Assign( ids );
             return _Type{}; 
         }
     };

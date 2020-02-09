@@ -98,7 +98,7 @@ namespace details {
             std::make_index_sequence<sizeof...( _Idxs )>{} 
         );
 
-        using return_t = Tuple<
+        using tuple_t = Tuple<
             /* Walk through all saved ids of tupes and convert back them to types.
              * Until this time it was extremely important to do all our manipulations
              * in compile-time, bacause types, passes to tuple should be known now. */
@@ -110,7 +110,8 @@ namespace details {
         // Just trust me here - tuple and passed structure have the same layout,
         // but can not be casted to each other directly.
         // 
-        return *(return_t*)( &obj );
+        auto pObj = static_cast<const void*>( &obj );
+        return *static_cast<const tuple_t*>( pObj );
     }
 
     /************************************************************************************/

@@ -60,6 +60,9 @@
     <ClInclude Include="Support.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="StreamOperators.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

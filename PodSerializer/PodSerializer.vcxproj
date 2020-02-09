@@ -161,6 +161,7 @@
     <ClInclude Include="ReflectionInternal.h" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="SizeTArray.h" />
+    <ClInclude Include="StreamOperators.h" />
     <ClInclude Include="Support.h" />
     <ClInclude Include="Tuple.h" />
     <ClInclude Include="Utils.h" />

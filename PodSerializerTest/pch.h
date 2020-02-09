@@ -16,6 +16,7 @@
 // 
 #include "../PodSerializer/Reflection.h"
 #include "../PodSerializer/ReflectionInternal.h"
+#include "../PodSerializer/StreamOperators.h"
 #include "../PodSerializer/Serialization.h"
 
 

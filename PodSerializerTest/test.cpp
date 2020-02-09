@@ -1,46 +1,50 @@
 #include "pch.h"
 
-//
-// Test settings
 // 
-#define TS_ENABLE_UNCOMPILABLE 0
+// Two fields in structure
+// 
+struct TwoFields
+{
+    int field1;
+    int field2;
+};
+#define TwoFieldsCorrectAnswer 2
 
-#pragma region Structs for testing
+//
+// Ten fields in structure
+// 
+struct TenFields
+{
+    char field1; int field2; int field3; double field4; short field5;
+    char field6; int field7; int field8; double field9; short field10;
+};
+#define TenFieldsCorrectAnswer 10
 
-    // 
-    // Two fields in structure
-    // 
-    struct TwoFields
-    {
-        int field1;
-        int field2;
-    };
-    #define TwoFieldsCorrectAnswer 2
+//
+// Struct with enum inside
+// 
+enum TestEnum1 : unsigned long long
+{
+    first1, second1
+};
 
-    //
-    // Ten fields in structure
-    // 
-    struct TenFields
-    {
-        char field1; int field2; int field3; double field4; short field5;
-        char field6; int field7; int field8; double field9; short field10;
-    };
-    #define TenFieldsCorrectAnswer 10
+enum TestEnum2
+{
+    first2, second2
+};
 
-    #if TS_ENABLE_UNCOMPILABLE
+struct ThreeFieldsWithEnum
+{
+    char      field1;
+    TestEnum1 field2;
+    TestEnum2 field3; 
+};
+#define ThreeFieldsWithEnumCorrectAnswer 3
 
-        //
-        // Uncompilable tests.
-        // 
-        struct NotPod
-        {
-            int field1; int field2;
-            NotPod() : field1( 0 ), field2( 0 ) {};
-        };
 
-    #endif // TS_ENABLE_UNCOMPILABLE
-
-#pragma endregion
+/************************************************************************************
+ * Reflection tests
+ */
 
 TEST(GetFieldsCount, Correctness_ExplicitTemplate) 
 {
@@ -71,6 +75,16 @@ TEST(GetFieldsCount, Correctness_ParameterPassing)
     );
 }
 
+TEST(GetFieldsCount, ContainsEnum)
+{
+    ThreeFieldsWithEnum three_fields;
+
+    EXPECT_EQ(
+        GetFieldsCount( three_fields ),
+        ThreeFieldsWithEnumCorrectAnswer
+    );
+}
+
 TEST(ToTuple, Correctness)
 {
     TwoFields two_fields{ 2, 4 };
@@ -84,20 +98,38 @@ TEST(ToTuple, Correctness)
 
     auto ten_tpl = ToTuple( ten_fields );
 
-    EXPECT_EQ( types::get< 0>( ten_tpl ), 'a'  );
-    EXPECT_EQ( types::get< 1>( ten_tpl ), 25   );
-    EXPECT_EQ( types::get< 2>( ten_tpl ), 4    );
-    EXPECT_EQ( types::get< 3>( ten_tpl ), 3.14 );
-    EXPECT_EQ( types::get< 4>( ten_tpl ), 0    );
-    EXPECT_EQ( types::get< 5>( ten_tpl ), 'b'  );
-    EXPECT_EQ( types::get< 6>( ten_tpl ), 54   );
-    EXPECT_EQ( types::get< 7>( ten_tpl ), 32   );
-    EXPECT_EQ( types::get< 8>( ten_tpl ), 2.71 );
-    EXPECT_EQ( types::get< 9>( ten_tpl ), 9    );
+    EXPECT_EQ( types::get<0>( ten_tpl ), 'a'  );
+    EXPECT_EQ( types::get<1>( ten_tpl ), 25   );
+    EXPECT_EQ( types::get<2>( ten_tpl ), 4    );
+    EXPECT_EQ( types::get<3>( ten_tpl ), 3.14 );
+    EXPECT_EQ( types::get<4>( ten_tpl ), 0    );
+    EXPECT_EQ( types::get<5>( ten_tpl ), 'b'  );
+    EXPECT_EQ( types::get<6>( ten_tpl ), 54   );
+    EXPECT_EQ( types::get<7>( ten_tpl ), 32   );
+    EXPECT_EQ( types::get<8>( ten_tpl ), 2.71 );
+    EXPECT_EQ( types::get<9>( ten_tpl ), 9    );
 }
 
-TEST(Serialization, DirectStreamCout)
+TEST(ToTuple, ContainsEnum)
 {
+    ThreeFieldsWithEnum three_fields = { 'a', first1, second2 };
+
+    auto three_tpl = ToTuple( three_fields );
+
+    EXPECT_EQ( types::get<0>( three_tpl ), 'a'     );
+    EXPECT_EQ( types::get<1>( three_tpl ), first1  );
+    EXPECT_EQ( types::get<2>( three_tpl ), second2 );
+}
+
+
+/************************************************************************************
+ * Visual stream operators tests
+ */
+
+TEST(Operators, ostream)
+{
+    using operators::operator <<;
+    
     std::cout << "It is a visual test.\n" << std::endl;
 
     TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
@@ -105,14 +137,21 @@ TEST(Serialization, DirectStreamCout)
     std::cout << ten_fields << std::endl;
 }
 
-TEST(Serialization, DirectStreamWcout)
+TEST(Operators, wostream)
 {
+    using operators::operator <<;
+    
     std::wcout << L"It is a visual test.\n" << std::endl;
 
     TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
 
     std::wcout << ten_fields << std::endl;
 }
+
+
+/************************************************************************************
+ * Serialization tests
+ */
 
 TEST(Serialization, Binary)
 {
@@ -136,6 +175,32 @@ TEST(Serialization, Binary)
 
     EXPECT_EQ( loaded.field1, original.field1 );
     EXPECT_EQ( loaded.field2, original.field2 );
+}
+
+TEST(Serialization, BinaryContainsEnum)
+{
+    ThreeFieldsWithEnum original{ 'a', first1, second2 };
+
+    BinarySerializer<ThreeFieldsWithEnum> serializer;
+    BinaryBuffer<ThreeFieldsWithEnum> buffer;
+
+    EXPECT_TRUE( buffer.IsEmpty() );
+
+    serializer.Serialize( original, buffer );
+
+    EXPECT_FALSE( buffer.IsEmpty() );
+
+    ThreeFieldsWithEnum loaded{ 'b', second1, first2 };
+
+    EXPECT_NE( loaded.field1, original.field1 );
+    EXPECT_NE( loaded.field2, original.field2 );
+    EXPECT_NE( loaded.field3, original.field3 );
+
+    serializer.Deserialize( loaded, buffer );
+
+    EXPECT_EQ( loaded.field1, original.field1 );
+    EXPECT_EQ( loaded.field2, original.field2 );
+    EXPECT_EQ( loaded.field3, original.field3 );
 }
 
 TEST(Serialization, StringStream)
@@ -162,12 +227,12 @@ TEST(Serialization, StringStream)
     EXPECT_EQ( loaded.field2, original.field2 );
 }
 
-TEST(Serialization, WStringStream)
+TEST(Serialization, StringStreamContainsEnum)
 {
-    TwoFields original{ 2, 4 };
+    ThreeFieldsWithEnum original{ 'a', first1, second2 };
 
-    WStringStreamSerializer<TwoFields> serializer;
-    WStringStreamBuffer<TwoFields> buffer;
+    StringStreamSerializer<ThreeFieldsWithEnum> serializer;
+    StringStreamBuffer<ThreeFieldsWithEnum> buffer;
 
     EXPECT_TRUE( buffer.IsEmpty() );
 
@@ -175,32 +240,15 @@ TEST(Serialization, WStringStream)
 
     EXPECT_FALSE( buffer.IsEmpty() );
 
-    TwoFields loaded{ 0, 0 };
+    ThreeFieldsWithEnum loaded{ 'b', second1, first2 };
 
     EXPECT_NE( loaded.field1, original.field1 );
     EXPECT_NE( loaded.field2, original.field2 );
+    EXPECT_NE( loaded.field3, original.field3 );
 
     serializer.Deserialize( loaded, buffer );
 
     EXPECT_EQ( loaded.field1, original.field1 );
     EXPECT_EQ( loaded.field2, original.field2 );
+    EXPECT_EQ( loaded.field3, original.field3 );
 }
-
-#if TS_ENABLE_UNCOMPILABLE
-
-    TEST(GetFieldsCount, Uncompilable_ExplicitTemplate)
-    {
-        GetFieldsCount<NotPod>();
-        GetFieldsCount<int>();
-    }
-
-    TEST(GetFieldsCount, Uncompilable_ParameterPassing)
-    {
-        NotPod not_pod;
-        int integer;
-
-        GetFieldsCount( not_pod );
-        GetFieldsCount( integer );
-    }
-
-#endif // TS_ENABLE_UNCOMPILABLE

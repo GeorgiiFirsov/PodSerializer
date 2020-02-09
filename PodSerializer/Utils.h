@@ -40,20 +40,6 @@ namespace utils {
     /************************************************************************************/
 
     //
-    // Structure used to "initialize" any variable of any type.
-    // 
-    template<
-        size_t /* _Idx */ /* Formal index that makes easier work with variadics */
-    > struct _UniversalInit
-    {
-        template<
-            typename _Type /* Type to be initialized */
-        > constexpr operator _Type&() const noexcept; // Not implemented - it's ok :)
-    };
-
-    /************************************************************************************/
-
-    //
     // Fundamental types registration
     // 
 
@@ -93,6 +79,20 @@ namespace utils {
             utils::IdenticalType< typename std::underlying_type<_Type>::type> 
         );
     }
+
+    /************************************************************************************/
+
+    //
+    // Structure used to "initialize" any variable of any type.
+    // 
+    template<
+        size_t /* _Idx */ /* Formal index that makes easier work with variadics */
+    > struct _UniversalInit
+    {
+        template<
+            typename _Type /* Type to be initialized */
+        > constexpr operator _Type&() const noexcept; // Not implemented - it's ok :)
+    };
 
     /************************************************************************************/
 
@@ -147,6 +147,32 @@ namespace utils {
             constexpr auto ids = _GetIdByType( IdenticalType<_Type>{} );
             Assign( ids );
             return _Type{}; 
+        }
+    };
+
+    /************************************************************************************/
+
+    //
+    // Stucture used to wrap reference to variable of one type
+    // and then assign to variable of any type (types must be convertible to each other).
+    // 
+    template<typename _Stored>
+    struct TypeCaster
+    {
+        //
+        // Reference to external value
+        // 
+        _Stored& value;
+
+        template<typename _Type>
+        constexpr operator _Type()
+        {
+            //
+            // _Stored and _Type could be the same types and 'static_cast' does nothing.
+            // But _Stored can be uderlying type of enumeration of type _Type. That is 
+            // the reason, why it is necessary to use 'static_cast' here.
+            // 
+            return static_cast<_Type>( value );
         }
     };
 

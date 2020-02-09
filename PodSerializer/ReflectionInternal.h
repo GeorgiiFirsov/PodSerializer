@@ -125,8 +125,9 @@ namespace details {
         std::index_sequence<_Idxs...> /* indices */ 
     ) noexcept( std::is_nothrow_constructible<_Type, _Types...>::value )
     {
-        using types::get;
         using reflection::GetFieldsCount;
+        using utils::TypeCaster;
+        using types::get;
 
         static_assert( 
             sizeof...( _Idxs ) == sizeof...( _Types ), 
@@ -136,7 +137,9 @@ namespace details {
         //
         // Simply construct object using aggregate initialization.
         // 
-        return _Type{ get<_Idxs>( tpl )... };
+        return _Type{ 
+            TypeCaster<decltype( get<_Idxs>( tpl ) )>{ get<_Idxs>( tpl ) }... 
+        };
     }
 
 } // details

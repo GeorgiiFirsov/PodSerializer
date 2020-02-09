@@ -2,6 +2,7 @@
 
 #include "pch.h"
 
+#include "Support.h"
 #include "ReflectionInternal.h"
 
 
@@ -27,10 +28,12 @@ namespace reflection {
         typename _Type /* Type to count fields in */
     > constexpr size_t GetFieldsCount() noexcept
     {
-        REFLECTION_CHECK_TYPE( _Type );
+        using _CleanType = typename std::remove_cv<_Type>::type;
 
-        return details::_GetFieldsCount_Impl<_Type>( 
-            std::make_index_sequence<sizeof( _Type )>{} 
+        REFLECTION_CHECK_TYPE( _CleanType );
+
+        return details::_GetFieldsCount_Impl<_CleanType>( 
+            std::make_index_sequence<sizeof( _CleanType )>{} 
         );
     }
 
@@ -40,10 +43,12 @@ namespace reflection {
         const _Type& /* obj */ /* For implicit template parameter deduction */ 
     ) noexcept
     {
-        REFLECTION_CHECK_TYPE( _Type );
+        using _CleanType = typename std::remove_cv<_Type>::type;
 
-        return details::_GetFieldsCount_Impl<_Type>( 
-            std::make_index_sequence<sizeof( _Type )>{} 
+        REFLECTION_CHECK_TYPE( _CleanType );
+
+        return details::_GetFieldsCount_Impl<_CleanType>( 
+            std::make_index_sequence<sizeof( _CleanType )>{} 
         );
     }
 
@@ -62,10 +67,12 @@ namespace reflection {
         typename _Type /* Type to convert into ids array */
     > constexpr decltype(auto) GetTypeIds() noexcept( std::is_nothrow_constructible<_Type>::value )
     {
-        REFLECTION_CHECK_TYPE(_Type);
+        using _CleanType = typename std::remove_cv<_Type>::type;
 
-        return details::_GetTypeIds_Impl<_Type>( 
-            std::make_index_sequence<GetFieldsCount<_Type>()>{} 
+        REFLECTION_CHECK_TYPE( _CleanType );
+
+        return details::_GetTypeIds_Impl<_CleanType>( 
+            std::make_index_sequence<GetFieldsCount<_CleanType>()>{} 
         );
     }
 
@@ -75,10 +82,12 @@ namespace reflection {
         const _Type& /* obj */ /* For implicit template parameter deduction */
     ) noexcept( std::is_nothrow_constructible<_Type>::value )
     {
-        REFLECTION_CHECK_TYPE( _Type );
+        using _CleanType = typename std::remove_cv<_Type>::type;
 
-        return details::_GetTypeIds_Impl<_Type>( 
-            std::make_index_sequence<GetFieldsCount<_Type>()>{} 
+        REFLECTION_CHECK_TYPE( _CleanType );
+
+        return details::_GetTypeIds_Impl<_CleanType>( 
+            std::make_index_sequence<GetFieldsCount<_CleanType>()>{} 
         );
     }
 
@@ -98,10 +107,12 @@ namespace reflection {
          const _Type& obj /* Object to convert into tuple */
     )
     {
-        REFLECTION_CHECK_TYPE( _Type );
+        using _CleanType = typename std::remove_cv<_Type>::type;
+
+        REFLECTION_CHECK_TYPE( _CleanType );
 
         return details::_ToTuple_Impl( 
-            obj, std::make_index_sequence<GetFieldsCount<_Type>()>{} 
+            obj, std::make_index_sequence<GetFieldsCount<_CleanType>()>{} 
         );
     }
 
@@ -120,9 +131,11 @@ namespace reflection {
         const types::Tuple<_Types...>& tpl
     ) noexcept( std::is_nothrow_constructible<_Type, _Types...>::value )
     {
-        REFLECTION_CHECK_TYPE( _Type );
+        using _CleanType = typename std::remove_cv<_Type>::type;
 
-        return details::_FromTuple_Impl<_Type>( 
+        REFLECTION_CHECK_TYPE( _CleanType );
+
+        return details::_FromTuple_Impl<_CleanType>( 
             tpl, std::make_index_sequence<sizeof...( _Types )>{} 
         );
     }

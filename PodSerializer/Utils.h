@@ -5,17 +5,6 @@
 #define use_as_return_type( __Type ) __Type{}
 
 //
-// Type passed to functions in reflection functions should be pod, but not fundamental
-// 
-#define REFLECTION_CHECK_TYPE( __Type )                                                                              \
-    static_assert(                                                                                                   \
-        std::is_pod<##__Type>::value, #__Type " in " __FUNCTION__ " should be POD"                                   \
-    );                                                                                                               \
-    static_assert(                                                                                                   \
-        std::negation<std::is_fundamental<##__Type>>::value, #__Type " in " __FUNCTION__ " shouldn't be fundamental" \
-    );
-
-//
 // Easiest way to assign an id to a type
 // 
 #define REFLECTION_REGISTER_TYPE( _Type, _Integer )                                                   \
@@ -91,6 +80,19 @@ namespace utils {
     REFLECTION_REGISTER_TYPE( volatile void*      , 21 );
     REFLECTION_REGISTER_TYPE( const volatile void*, 22 );
     REFLECTION_REGISTER_TYPE( nullptr_t           , 23 );
+
+    template<typename _Type>
+    constexpr inline auto _GetIdByType( utils::IdenticalType<_Type> ) noexcept
+        -> typename std::enable_if<std::is_enum<_Type>::value, size_t>::type
+    {
+        //
+        // If our structure contains enumeration, just extract an underlying type
+        // and assume it as type of a field.
+        // 
+        return _GetIdByType( 
+            utils::IdenticalType< typename std::underlying_type<_Type>::type> 
+        );
+    }
 
     /************************************************************************************/
 

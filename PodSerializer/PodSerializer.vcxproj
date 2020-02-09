@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Buffers.h" />
+    <ClInclude Include="Config.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Reflection.h" />
     <ClInclude Include="ReflectionInternal.h" />

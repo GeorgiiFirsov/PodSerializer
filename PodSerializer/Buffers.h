@@ -250,6 +250,12 @@ namespace serialization {
 
             auto PutToTuple = [&buffer = m_buffer]( auto& /* non-const lvalue!!! */ element )
             {
+                /* Do not use WStringStreamSerializer with types
+                 * that contain enums inside. It cause compiler
+                 * error here (at least on MSVC 19.22). I guess, it
+                 * is a compler's bug :(
+                 * Try to use StringStreamSerializer with 
+                 * StringStreamBuffer to avoid this problem. */
                 buffer >> element;
             };
 

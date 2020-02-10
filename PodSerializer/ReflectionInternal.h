@@ -17,7 +17,7 @@ namespace details {
     template<
         typename  _Type /* Type to count fields in */,
         size_t    _Idx  /* First index */,
-        size_t... _Idxs /* Rest indices */
+        size_t... _Idxs /* Rest indices of internal types */
     > constexpr auto _GetFieldsCount_Impl( std::index_sequence<_Idx, _Idxs...> indices ) noexcept
         -> decltype
         ( 
@@ -43,7 +43,7 @@ namespace details {
     // 
     template<
         typename  _Type /* Type to count fields in */,
-        size_t... _Idxs /* Indices */
+        size_t... _Idxs /* Indices of internal types */
     > constexpr size_t _GetFieldsCount_Impl( std::index_sequence<_Idxs...> /* indices */ ) noexcept
     {
         //
@@ -59,7 +59,7 @@ namespace details {
 
     template<
         typename  _Type  /* Type to return ids for */,
-        size_t... _Idxs  /* Indices */
+        size_t... _Idxs  /* Indices of internal types */
     > constexpr auto _GetTypeIds_Impl( std::index_sequence<_Idxs...> indices ) 
         noexcept( std::is_nothrow_constructible<_Type, utils::_UniversalInit<_Idxs>...>::value )
     {
@@ -92,7 +92,7 @@ namespace details {
 
     template<
         typename  _Type /* Type to convert into a tuple */,
-        size_t... _Idxs /* Indices */
+        size_t... _Idxs /* Indices of internal types */
     > constexpr auto _ToTuple_Impl( 
         _Type& obj /* Object to convert into a structure */, 
         std::index_sequence<_Idxs...> /* indices */ 
@@ -132,7 +132,7 @@ namespace details {
     template<
         typename    _Type  /* Type to consruct from tuple */,
         typename... _Types /* Types stored in tuple */,
-        size_t...   _Idxs  /* Indices */
+        size_t...   _Idxs  /* Indices of internal types */
     > constexpr _Type _FromTuple_Impl( 
         const types::Tuple<_Types...>& tpl /* Tuple to be converted into struct */, 
         std::index_sequence<_Idxs...> /* indices */ 

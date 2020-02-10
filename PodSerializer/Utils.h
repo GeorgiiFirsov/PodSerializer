@@ -206,7 +206,7 @@ namespace utils {
 
     template<
         typename  _Type /* Type to convert into raw types ids array */,
-        size_t... _Idxs
+        size_t... _Idxs /* Indices of interanl types */
     > constexpr auto _GetIdsRaw_Impl( std::index_sequence<_Idxs...> )
         noexcept( std::is_nothrow_constructible<_Type, _UniversalInit<_Idxs>...>::value )
     {

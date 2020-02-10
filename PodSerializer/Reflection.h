@@ -65,7 +65,7 @@ namespace reflection {
 
     template<
         typename _Type /* Type to convert into ids array */
-    > constexpr decltype(auto) GetTypeIds() noexcept( std::is_nothrow_constructible<_Type>::value )
+    > constexpr decltype(auto) GetTypeIds() 
     {
         using _CleanType = typename std::remove_cv<_Type>::type;
 
@@ -80,7 +80,7 @@ namespace reflection {
         typename _Type /* Type to convert into ids array */
     > constexpr decltype(auto) GetTypeIds(
         const _Type& /* obj */ /* For implicit template parameter deduction */
-    ) noexcept( std::is_nothrow_constructible<_Type>::value )
+    )
     {
         using _CleanType = typename std::remove_cv<_Type>::type;
 
@@ -105,7 +105,7 @@ namespace reflection {
     constexpr /* Maybe it is possible to construct our tuple in compile-time */
     decltype(auto) ToTuple( 
          const _Type& obj /* Object to convert into tuple */
-    )
+    ) noexcept
     {
         using _CleanType = typename std::remove_cv<_Type>::type;
 

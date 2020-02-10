@@ -60,22 +60,32 @@ namespace details {
     template<
         typename  _Type  /* Type to return ids for */,
         size_t... _Idxs  /* Indices */
-    > constexpr auto _GetTypeIds_Impl( std::index_sequence<_Idxs...> /* indices */ ) 
-        noexcept( std::is_nothrow_constructible<_Type>::value )
+    > constexpr auto _GetTypeIds_Impl( std::index_sequence<_Idxs...> indices ) 
+        noexcept( std::is_nothrow_constructible<_Type, utils::_UniversalInit<_Idxs>...>::value )
     {
-        using types::SizeTArray;
         using utils::_IndexedUniversalInit;
-
-        constexpr SizeTArray<sizeof...( _Idxs )> ids{ { 0 } };
+        using utils::_GetIdsRaw_Impl;
+        using utils::ArrayTransformer;
+        using types::SizeTArray;
 
         //
-        // Here we write ids into array by creating temporary object.
+        // Raw array with potential zero paddings
         // 
-        constexpr _Type temporary{ 
-            _IndexedUniversalInit<_Idxs>{ const_cast<size_t*>( ids.data + _Idxs ) }... 
-        };
+        constexpr auto idsRaw = _GetIdsRaw_Impl<_Type>( indices );
 
-        return ids;
+        //
+        // Here we need to remove all zeros from 'idsRaw' array.
+        // Use helper class ArrayTransformer.
+        // 
+        constexpr SizeTArray<sizeof...( _Idxs )> idsWithoutZeros{ { 0 } };
+
+        constexpr ArrayTransformer<sizeof( _Type )> transform{ 
+            const_cast<size_t*>( idsRaw.data ), 
+            const_cast<size_t*>( idsWithoutZeros.data ) 
+        };
+        transform.Run();
+
+        return idsWithoutZeros;
     }
 
     /************************************************************************************/
@@ -86,7 +96,7 @@ namespace details {
     > constexpr auto _ToTuple_Impl( 
         _Type& obj /* Object to convert into a structure */, 
         std::index_sequence<_Idxs...> /* indices */ 
-    )
+    ) noexcept
     {
         using utils::SizeT;
         using utils::_GetTypeById;

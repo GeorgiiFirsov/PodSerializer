@@ -16,7 +16,7 @@
  ************************************************************************************/
 
 template<typename _Type>
-constexpr bool is_supported_type = \
+using is_supported_type = \
     std::conjunction<
         std::negation<
             std::is_reference<_Type>
@@ -36,7 +36,7 @@ constexpr bool is_supported_type = \
             std::is_fundamental<_Type>
         >,
         std::is_standard_layout<_Type>
-    >::value;
+    >;
 
 
 //
@@ -44,6 +44,6 @@ constexpr bool is_supported_type = \
 // 
 #define REFLECTION_CHECK_TYPE( __Type )                                                              \
     static_assert(                                                                                   \
-        is_supported_type<##__Type>,                                                                 \
+        is_supported_type<__Type>::value,                                                            \
         #__Type " in " __FUNCTION__ " doesn't match the requirements for reflection (see Support.h)" \
     );

@@ -12,6 +12,7 @@
  * - Type must be POD.
  * - Type must not be fundamental.
  * - Type must have standard layout.
+ * - Type must not be empty
  *
  ************************************************************************************/
 
@@ -35,7 +36,10 @@ using is_supported_type = \
         std::negation<
             std::is_fundamental<_Type>
         >,
-        std::is_standard_layout<_Type>
+        std::is_standard_layout<_Type>,
+        std::negation<
+            std::is_empty<_Type>
+        >
     >;
 
 

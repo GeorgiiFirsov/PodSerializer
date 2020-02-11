@@ -41,6 +41,23 @@ struct ThreeFieldsWithEnum
 };
 #define ThreeFieldsWithEnumCorrectAnswer 3
 
+//
+// Struct with nested struct inside
+// 
+struct Nested
+{
+    int field1;
+    char field2;
+};
+
+struct ThreeFieldsWithNestedStruct
+{
+    double field1;
+    Nested field2;
+    char   field3;
+};
+#define ThreeFieldsWithNestedStructCorrectAnswer 3
+
 
 /************************************************************************************
  * Reflection tests

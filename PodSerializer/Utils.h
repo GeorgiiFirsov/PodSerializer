@@ -60,7 +60,7 @@ namespace utils {
     // Structure used to cunstruct ids sequence
     // 
     template<
-        size_t _Idx /* Index in array of ids for id of current type */
+        size_t /* _Idx */ /* Formal index that makes easier work with variadics */
     > struct _IndexedUniversalInit
     {
         //
@@ -107,6 +107,30 @@ namespace utils {
             constexpr auto ids = _GetIdByType( IdenticalType<_Type>{} );
             Assign( ids );
             return _Type{}; 
+        }
+    };
+
+    /************************************************************************************/
+
+    //
+    // This structure used to write array of offsets
+    // of types in structure.
+    // 
+    template<
+        size_t _Idx  /* Index of type inside of structure */,
+        size_t _Size /* Size of array of offsets (actually, an amount of fields in structure) */
+    > struct _OffsetsUniversalInit
+    {
+        size_t* pOffsets; // Pointer to the beginning of offsets array
+        size_t* pSizes;   // Pointer to the beginning of sizes array
+
+        template<
+            typename _Type /* Type to be initialized */
+        > constexpr operator _Type() const noexcept
+        {
+            const_cast<size_t*>( pOffsets )[_Idx] = _Idx != 0 ? pOffsets[_Idx - 1] + pSizes[_Idx - 1] : 0;
+            const_cast<size_t*>( pSizes )[_Idx] = sizeof(_Type);
+            return _Type{};
         }
     };
 
@@ -191,8 +215,8 @@ namespace utils {
     // when we reach end of the first array.
     // 
     template<
-        size_t _Size1,
-        size_t _Idx2
+        size_t _Size1 /* Size of source */,
+        size_t _Idx2  /* Index in destination */
     > struct ArrayTransformer<_Size1, _Size1, _Idx2>
     {
         size_t* pFirst;
@@ -206,19 +230,36 @@ namespace utils {
 
     template<
         typename  _Type /* Type to convert into raw types ids array */,
-        size_t... _Idxs /* Indices of interanl types */
+        size_t... _Idxs /* Indices of internal types */
     > constexpr auto _GetIdsRaw_Impl( std::index_sequence<_Idxs...> )
         noexcept( std::is_nothrow_constructible<_Type, _UniversalInit<_Idxs>...>::value )
     {
         using types::SizeTArray;
 
+        //
+        // Each id will be written at index equal to sum of sizes
+        // of all previous types in struct. Actual indices will
+        // be stored in 'offsets'
+        // 
         constexpr SizeTArray<sizeof( _Type )> idsRaw{ { 0 } };
+        constexpr SizeTArray<sizeof...( _Idxs )> offsets{ { 0 } };
+        constexpr SizeTArray<sizeof...( _Idxs )> sizes /* dummy */ { { 0 } }; 
+
+        //
+        // Write offsets of each id into array by creating temporary object.
+        // 
+        constexpr _Type temporary1{
+            _OffsetsUniversalInit<_Idxs, sizeof...( _Idxs )>{ 
+                const_cast<size_t*>( offsets.data ), 
+                const_cast<size_t*>( sizes.data ) 
+            }...
+        };
 
         //
         // Here we write ids into array by creating temporary object.
         // 
-        constexpr _Type temporary{ 
-            _IndexedUniversalInit<_Idxs>{ const_cast<size_t*>( idsRaw.data + _Idxs ) }... 
+        constexpr _Type temporary2{ 
+            _IndexedUniversalInit<_Idxs>{ const_cast<size_t*>( idsRaw.data + offsets.data[_Idxs] ) }... 
         };
 
         return idsRaw;
@@ -255,7 +296,7 @@ namespace utils {
     REFLECTION_REGISTER_TYPE( nullptr_t           , 23 );
 
     template<typename _Type>
-    constexpr inline auto _GetIdByType( utils::IdenticalType<_Type> ) noexcept
+    constexpr inline auto _GetIdByType( IdenticalType<_Type> ) noexcept
         -> typename std::enable_if<std::is_enum<_Type>::value, size_t>::type
     {
         //
@@ -268,7 +309,7 @@ namespace utils {
     }
 
     template<typename _Type>
-    constexpr inline auto _GetIdByType( utils::IdenticalType<_Type> ) noexcept
+    constexpr inline auto _GetIdByType( IdenticalType<_Type> ) noexcept
         -> typename std::enable_if<std::is_union<_Type>::value, size_t>::type
     {
         static_assert( false, "Unions are not supported" );
@@ -276,7 +317,7 @@ namespace utils {
     }
 
     template<typename _Type>
-    constexpr inline auto _GetIdByType( utils::IdenticalType<_Type> )
+    constexpr inline auto _GetIdByType( IdenticalType<_Type> )
         -> typename std::enable_if<
             /* This function used to support nested structures. It returns
              * array of identifiers recursively. Then this array and external

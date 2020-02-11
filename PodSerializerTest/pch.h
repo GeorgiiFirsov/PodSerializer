@@ -24,6 +24,7 @@
 // Project names
 //  
 using reflection::GetFieldsCount;
+using reflection::GetTypeIds;
 using reflection::ToTuple;
 
 using serialization::BinarySerializer;

@@ -65,7 +65,7 @@ namespace details {
     {
         using utils::_IndexedUniversalInit;
         using utils::_GetIdsRaw_Impl;
-        using utils::ArrayTransformer;
+        using types::ArrayTransformer;
         using types::SizeTArray;
 
         //
@@ -77,7 +77,7 @@ namespace details {
         // Here we need to remove all zeros from 'idsRaw' array.
         // Use helper class ArrayTransformer.
         // 
-        constexpr SizeTArray<sizeof...( _Idxs )> idsWithoutZeros{ { 0 } };
+        constexpr SizeTArray<idsRaw.CountNonZeros()> idsWithoutZeros{ { 0 } };
 
         constexpr ArrayTransformer<sizeof( _Type )> transform{ 
             const_cast<size_t*>( idsRaw.data ), 

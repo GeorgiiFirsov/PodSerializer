@@ -10,9 +10,9 @@
 //
 // Easiest way to assign an id to a type
 // 
-#define REFLECTION_REGISTER_TYPE( _Type, _Integer )                                                   \
-    constexpr inline size_t _GetIdByType( utils::IdenticalType<_Type> ) noexcept { return _Integer; } \
-    constexpr inline _Type  _GetTypeById( utils::SizeT<_Integer> ) noexcept { constexpr _Type result{}; return result; }
+#define REFLECTION_REGISTER_TYPE( _Type, _Integer )                                                          \
+    constexpr types::SizeTArray<1> _GetIdByType( utils::IdenticalType<_Type> ) noexcept { return { { _Integer } }; } \
+    constexpr _Type  _GetTypeById( utils::SizeT<_Integer> ) noexcept { constexpr _Type result{}; return result; }
 
 //
 // Macro that produces compilation error with specified message
@@ -21,6 +21,14 @@
 
 namespace reflection {
 namespace utils {
+
+    /************************************************************************************/
+
+    //
+    // Forward declaration
+    // 
+    template<size_t /* _Idx */> 
+    struct _IndexedUniversalInit;
 
     /************************************************************************************/
 
@@ -39,6 +47,111 @@ namespace utils {
 
     template<size_t _Integer>
     using SizeT = std::integral_constant<size_t, _Integer>;
+
+    /************************************************************************************/
+
+    template<
+        typename  _Type /* Type to convert into raw types ids array */,
+        size_t... _Idxs /* Indices of internal types */
+    > constexpr auto _GetIdsRaw_Impl( std::index_sequence<_Idxs...> )
+        noexcept( std::is_nothrow_constructible<_Type, _UniversalInit<_Idxs>...>::value )
+    {
+        using types::SizeTArray;
+
+        //
+        // Each id will be written at index equal to sum of sizes
+        // of all previous types in struct. Actual indices will
+        // be stored in 'offsets'
+        // 
+        constexpr SizeTArray<sizeof( _Type )> idsRaw{ { 0 } };
+        constexpr SizeTArray<sizeof...( _Idxs )> offsets{ { 0 } };
+        constexpr SizeTArray<sizeof...( _Idxs )> sizes /* dummy */ { { 0 } }; 
+
+        //
+        // Write offsets of each id into array by creating temporary object.
+        // 
+        constexpr _Type temporary1{
+            _OffsetsUniversalInit<_Idxs, sizeof...( _Idxs )>{ 
+                const_cast<size_t*>( offsets.data ), 
+                const_cast<size_t*>( sizes.data ) 
+            }...
+        };
+
+        //
+        // Here we write ids into array by creating temporary object.
+        // 
+        constexpr _Type temporary2{ 
+            _IndexedUniversalInit<_Idxs>{ const_cast<size_t*>( idsRaw.data + offsets.data[_Idxs] ) }... 
+        };
+
+        return idsRaw;
+    }
+
+    /************************************************************************************/
+
+    template<typename _Type> 
+    constexpr types::SizeTArray<1>
+    _GetIdByType( IdenticalType<_Type>, typename std::enable_if<std::is_enum<_Type>::value>::type = 0 ) noexcept;
+
+    template<typename _Type>
+    constexpr types::SizeTArray<sizeof( _Type )> 
+    _GetIdByType( IdenticalType<_Type>/*, typename std::enable_if<is_supported_type<_Type>::value>::type = 0*/ ) noexcept;
+
+    //
+    // Fundamental types registration
+    // 
+
+    REFLECTION_REGISTER_TYPE( unsigned char       ,  1 );
+    REFLECTION_REGISTER_TYPE( unsigned short      ,  2 );
+    REFLECTION_REGISTER_TYPE( unsigned int        ,  3 );
+    REFLECTION_REGISTER_TYPE( unsigned long       ,  4 );
+    REFLECTION_REGISTER_TYPE( unsigned long long  ,  5 );
+    REFLECTION_REGISTER_TYPE( signed char         ,  6 );
+    REFLECTION_REGISTER_TYPE( short               ,  7 );
+    REFLECTION_REGISTER_TYPE( int                 ,  8 );
+    REFLECTION_REGISTER_TYPE( long                ,  9 );
+    REFLECTION_REGISTER_TYPE( long long           , 10 );
+    REFLECTION_REGISTER_TYPE( char                , 11 );
+    REFLECTION_REGISTER_TYPE( wchar_t             , 12 );
+    REFLECTION_REGISTER_TYPE( char16_t            , 13 );
+    REFLECTION_REGISTER_TYPE( char32_t            , 14 );
+    REFLECTION_REGISTER_TYPE( float               , 15 );
+    REFLECTION_REGISTER_TYPE( double              , 16 );
+    REFLECTION_REGISTER_TYPE( long double         , 17 );
+    REFLECTION_REGISTER_TYPE( bool                , 18 );
+    REFLECTION_REGISTER_TYPE( void*               , 19 );
+    REFLECTION_REGISTER_TYPE( const void*         , 20 );
+    REFLECTION_REGISTER_TYPE( volatile void*      , 21 );
+    REFLECTION_REGISTER_TYPE( const volatile void*, 22 );
+    REFLECTION_REGISTER_TYPE( nullptr_t           , 23 );
+
+
+    template<typename _Type> 
+    constexpr types::SizeTArray<1>
+    _GetIdByType( IdenticalType<_Type>, typename std::enable_if<std::is_enum<_Type>::value>::type ) noexcept
+    {
+        //
+        // If our structure contains enumeration, just extract an underlying type
+        // and assume it as type of a field.
+        // 
+        return _GetIdByType( 
+            utils::IdenticalType<typename std::underlying_type<_Type>::type> 
+        );
+    }
+
+    //
+    // This function used to support nested structures. It returns
+    // array of identifiers recursively. Then this array and external
+    // one will be merged
+    // 
+    template<typename _Type>
+    constexpr types::SizeTArray<sizeof( _Type )> 
+    _GetIdByType( IdenticalType<_Type>/*, typename std::enable_if<is_supported_type<_Type>::value>::type*/ ) noexcept
+    {
+        return _GetIdsRaw_Impl<_Type>( 
+            std::make_index_sequence<sizeof( _Type )>{}
+        );
+    }
 
     /************************************************************************************/
 
@@ -68,23 +181,10 @@ namespace utils {
         // 
         size_t* pTypeIds;
 
-        constexpr void Assign( size_t id ) const noexcept
+        template<size_t _IdsCount> 
+        constexpr void Assign( const types::SizeTArray<_IdsCount>& ids ) const noexcept
         {
-            //
-            // It is necessary to cast constness away, because our
-            // calculations are performed in compile-time with constant
-            // expressions.
-            // 
-            const_cast<size_t*>( pTypeIds )[0] = id;
-        }
-
-        template<
-            typename _TypeId /* Type of container with type ids */
-        > 
-        constexpr void Assign( const _TypeId& ids ) const noexcept
-        {
-            static_assert( false, __FUNCTION__ " is not permitted to be used for now" );
-            for (size_t i = 0; i < _TypeId::size(); ++i) 
+            for (size_t i = 0; i < _IdsCount; ++i) 
             {
                 //
                 // It is necessary here to cast constness away. 
@@ -99,13 +199,7 @@ namespace utils {
         > constexpr operator _Type()
             const noexcept( std::is_nothrow_constructible<_Type>::value )
         {
-            //
-            // It is necessary to cast constness away, because our
-            // calculations are performed in compile-time with constant
-            // expressions.
-            // 
-            constexpr auto ids = _GetIdByType( IdenticalType<_Type>{} );
-            Assign( ids );
+            Assign( _GetIdByType( IdenticalType<_Type>{} ) );
             return _Type{}; 
         }
     };
@@ -159,176 +253,6 @@ namespace utils {
             return static_cast<_Type>( value );
         }
     };
-
-    /************************************************************************************/
-
-    //
-    // Helper class to write all non-zero values 
-    // from first array to second one in compile time.
-    // 
-    template<
-        size_t _Size1    /* Size of first array (source) */,
-        size_t _Idx1 = 0 /* Current index in first array (source) */,
-        size_t _Idx2 = 0 /* Current index in second array (destination) */
-    > struct ArrayTransformer
-    {
-        size_t* pFirst;  // Pointer to first array
-        size_t* pSecond; // Pointer to second array
-
-        //
-        // Recursive transformation
-        // 
-        constexpr void Run() const noexcept
-        {
-#pragma warning(push)
-#pragma warning(disable: 4127) // conditional expression is constant
-            if (_Idx1 < _Size1)
-            {
-                if (pFirst[_Idx1]) 
-                {
-                    //
-                    // Write non-zero value to destination.
-                    // 
-                    const_cast<size_t*>( pSecond )[_Idx2] = pFirst[_Idx1];
-
-                    //
-                    // Instantiate next transformer with incremented indices and run transformation
-                    // 
-                    ArrayTransformer<_Size1, _Idx1 + 1, _Idx2 + 1> next{ pFirst, pSecond };
-                    next.Run();
-                }
-                else 
-                {
-                    //
-                    // Instantiate next transformer with incremented first index and run transformation
-                    // 
-                    ArrayTransformer<_Size1, _Idx1 + 1, _Idx2> next{ pFirst, pSecond };
-                    next.Run();
-                }
-            }
-#pragma warning(pop)
-        }
-    };
-
-    //
-    // Specialization to break recursive instantiation
-    // when we reach end of the first array.
-    // 
-    template<
-        size_t _Size1 /* Size of source */,
-        size_t _Idx2  /* Index in destination */
-    > struct ArrayTransformer<_Size1, _Size1, _Idx2>
-    {
-        size_t* pFirst;
-        size_t* pSecond;
-
-        constexpr void Run() const noexcept
-        { /* Empty */ }
-    };
-
-    /************************************************************************************/
-
-    template<
-        typename  _Type /* Type to convert into raw types ids array */,
-        size_t... _Idxs /* Indices of internal types */
-    > constexpr auto _GetIdsRaw_Impl( std::index_sequence<_Idxs...> )
-        noexcept( std::is_nothrow_constructible<_Type, _UniversalInit<_Idxs>...>::value )
-    {
-        using types::SizeTArray;
-
-        //
-        // Each id will be written at index equal to sum of sizes
-        // of all previous types in struct. Actual indices will
-        // be stored in 'offsets'
-        // 
-        constexpr SizeTArray<sizeof( _Type )> idsRaw{ { 0 } };
-        constexpr SizeTArray<sizeof...( _Idxs )> offsets{ { 0 } };
-        constexpr SizeTArray<sizeof...( _Idxs )> sizes /* dummy */ { { 0 } }; 
-
-        //
-        // Write offsets of each id into array by creating temporary object.
-        // 
-        constexpr _Type temporary1{
-            _OffsetsUniversalInit<_Idxs, sizeof...( _Idxs )>{ 
-                const_cast<size_t*>( offsets.data ), 
-                const_cast<size_t*>( sizes.data ) 
-            }...
-        };
-
-        //
-        // Here we write ids into array by creating temporary object.
-        // 
-        constexpr _Type temporary2{ 
-            _IndexedUniversalInit<_Idxs>{ const_cast<size_t*>( idsRaw.data + offsets.data[_Idxs] ) }... 
-        };
-
-        return idsRaw;
-    }
-
-    /************************************************************************************/
-
-    //
-    // Fundamental types registration
-    // 
-
-    REFLECTION_REGISTER_TYPE( unsigned char       ,  1 );
-    REFLECTION_REGISTER_TYPE( unsigned short      ,  2 );
-    REFLECTION_REGISTER_TYPE( unsigned int        ,  3 );
-    REFLECTION_REGISTER_TYPE( unsigned long       ,  4 );
-    REFLECTION_REGISTER_TYPE( unsigned long long  ,  5 );
-    REFLECTION_REGISTER_TYPE( signed char         ,  6 );
-    REFLECTION_REGISTER_TYPE( short               ,  7 );
-    REFLECTION_REGISTER_TYPE( int                 ,  8 );
-    REFLECTION_REGISTER_TYPE( long                ,  9 );
-    REFLECTION_REGISTER_TYPE( long long           , 10 );
-    REFLECTION_REGISTER_TYPE( char                , 11 );
-    REFLECTION_REGISTER_TYPE( wchar_t             , 12 );
-    REFLECTION_REGISTER_TYPE( char16_t            , 13 );
-    REFLECTION_REGISTER_TYPE( char32_t            , 14 );
-    REFLECTION_REGISTER_TYPE( float               , 15 );
-    REFLECTION_REGISTER_TYPE( double              , 16 );
-    REFLECTION_REGISTER_TYPE( long double         , 17 );
-    REFLECTION_REGISTER_TYPE( bool                , 18 );
-    REFLECTION_REGISTER_TYPE( void*               , 19 );
-    REFLECTION_REGISTER_TYPE( const void*         , 20 );
-    REFLECTION_REGISTER_TYPE( volatile void*      , 21 );
-    REFLECTION_REGISTER_TYPE( const volatile void*, 22 );
-    REFLECTION_REGISTER_TYPE( nullptr_t           , 23 );
-
-    template<typename _Type>
-    constexpr inline auto _GetIdByType( IdenticalType<_Type> ) noexcept
-        -> typename std::enable_if<std::is_enum<_Type>::value, size_t>::type
-    {
-        //
-        // If our structure contains enumeration, just extract an underlying type
-        // and assume it as type of a field.
-        // 
-        return _GetIdByType( 
-            utils::IdenticalType<typename std::underlying_type<_Type>::type> 
-        );
-    }
-
-    template<typename _Type>
-    constexpr inline auto _GetIdByType( IdenticalType<_Type> ) noexcept
-        -> typename std::enable_if<std::is_union<_Type>::value, size_t>::type
-    {
-        static_assert( false, "Unions are not supported" );
-        return {};
-    }
-
-    template<typename _Type>
-    constexpr inline auto _GetIdByType( IdenticalType<_Type> )
-        -> typename std::enable_if<
-            /* This function used to support nested structures. It returns
-             * array of identifiers recursively. Then this array and external
-             * one will be merged */
-            is_supported_type<_Type>::value, types::SizeTArray<sizeof( _Type )>
-        >::type
-    {
-        return _GetIdsRaw_Impl<_Type>( 
-            std::make_index_sequence<sizeof( _Type )>{}
-        );
-    }
 
 } // utils
 } // refletion

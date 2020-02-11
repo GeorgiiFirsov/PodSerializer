@@ -1,5 +1,7 @@
 #include "pch.h"
 
+#include "../PodSerializer/Utils.h"
+using reflection::utils::_GetIdsRaw_Impl;
 // 
 // Two fields in structure
 // 
@@ -100,6 +102,23 @@ TEST(GetFieldsCount, ContainsEnum)
         GetFieldsCount( three_fields ),
         ThreeFieldsWithEnumCorrectAnswer
     );
+}
+
+TEST(GetTypeIds, Correctness)
+{
+    constexpr auto ids = GetTypeIds<TwoFields>();
+
+    EXPECT_EQ( ids.data[0], 8 );
+    EXPECT_EQ( ids.data[1], 8 );
+}
+
+TEST(GetTypeIds, ContainsEnum)
+{
+    constexpr auto ids = GetTypeIds<ThreeFieldsWithEnum>();
+
+    EXPECT_EQ( ids.data[0], 11 );
+    EXPECT_EQ( ids.data[1],  5 );
+    EXPECT_EQ( ids.data[2],  8 );
 }
 
 TEST(ToTuple, Correctness)

@@ -82,8 +82,8 @@ namespace details {
     // Overload for enumerations
     // 
     template<typename _Type> 
-    constexpr size_t
-    _GetIdByType( IdenticalType<_Type>, typename std::enable_if<std::is_enum<_Type>::value>::type = 0 ) noexcept
+    constexpr typename std::enable_if<std::is_enum<_Type>::value, size_t>::type
+    _GetIdByType( IdenticalType<_Type> ) noexcept
     {
         //
         // If our structure contains enumeration, just extract an underlying type
@@ -95,12 +95,12 @@ namespace details {
     }
 
     //
-    // This function used to support nested structures. It returns
+    // This function used to support nested structures. It returns an
     // array of identifiers recursively. Then this array and external
     // one will be merged
     // 
     template<typename _Type>
-    constexpr types::SizeTArray<sizeof( _Type )> 
+    constexpr typename std::enable_if<is_supported_type<_Type>::value, types::SizeTArray<sizeof( _Type )>>::type
     _GetIdsByType( IdenticalType<_Type> ) noexcept
     {
         return _GetIdsRaw_Impl<_Type>( 

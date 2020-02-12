@@ -21,13 +21,13 @@
 namespace reflection {
 namespace details {
 
-	template<
-		typename _Type
-	> constexpr size_t GetTotalFieldsCount() noexcept
-	{
-		constexpr auto ids = GetTypeIds<_Type>();
-		return ids.size();
-	}
+    template<
+        typename _Type
+    > constexpr size_t GetTotalFieldsCount() noexcept
+    {
+        constexpr auto ids = GetTypeIds<_Type>();
+        return ids.size();
+    }
 
     /************************************************************************************/
 
@@ -55,30 +55,22 @@ namespace details {
             decltype( _GetTypeById( SizeT<get<_Idxs>( ids )>{} ) )...
         >;
 
-		tuple_t tpl;
-		size_t offset = 0;
+        tuple_t tpl;
+        size_t offset = 0;
 
-		auto PutAligned = [src = reinterpret_cast<const char*>( &obj ), &offset]( auto& element ) 
-		{
-			using element_t = typename std::decay<decltype( element )>::type;
+        auto PutAligned = [src = reinterpret_cast<const char*>( &obj ), &offset]( auto& element ) 
+        {
+            using element_t = typename std::decay<decltype( element )>::type;
 
-			while (offset % alignof( element_t ) != 0) offset++;
-			
-			element = *reinterpret_cast<const element_t*>( src + offset );
-			offset += sizeof( element_t );
-		};
+            while (offset % alignof( element_t ) != 0) offset++;
+            
+            element = *reinterpret_cast<const element_t*>( src + offset );
+            offset += sizeof( element_t );
+        };
 
-		types::for_each( tpl, PutAligned );
+        types::for_each( tpl, PutAligned );
 
-		return tpl;
-
-        //
-        // Bad black magic }-)
-        // Just trust me here - tuple and passed structure have the same layout,
-        // but can not be casted to each other directly.
-        // 
-        auto pObj = static_cast<const void*>( &obj );
-        return *static_cast<const tuple_t*>( pObj );
+        return tpl;
     }
 
 } // details

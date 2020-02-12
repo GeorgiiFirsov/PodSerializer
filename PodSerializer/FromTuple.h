@@ -21,7 +21,7 @@ namespace details {
 
     /************************************************************************************/
 
-	//
+    //
     // Stucture used to wrap reference to variable of one type
     // and then assign to variable of any type (types must be convertible to each other).
     // 
@@ -34,7 +34,7 @@ namespace details {
         _Stored& value;
 
         template<typename _Type>
-        constexpr operator _Type()
+        constexpr operator _Type() const noexcept
         {
             //
             // _Stored and _Type could be the same types and 'static_cast' does nothing.
@@ -47,14 +47,14 @@ namespace details {
 
     /************************************************************************************/
 
-	template<
+    template<
         typename    _Type  /* Type to consruct from tuple */,
         typename... _Types /* Types stored in tuple */,
         size_t...   _Idxs  /* Indices of internal types */
     > constexpr _Type _FromTuple_Impl( 
         const types::Tuple<_Types...>& tpl /* Tuple to be converted into struct */, 
         std::index_sequence<_Idxs...> /* indices */ 
-    ) noexcept( std::is_nothrow_constructible<_Type, _Types...>::value )
+    ) noexcept
     {
         using reflection::GetFieldsCount;
         using types::get;
@@ -78,10 +78,13 @@ namespace details {
     /************************************************************************************/
                              /* vvv       User API      vvv */
 
-    template<typename _Type, typename... _Types>
+    template<
+        typename    _Type  /* Type to construct from tuple */, 
+        typename... _Types /* Types stored in tuple */
+    >
     constexpr _Type FromTuple(
         const types::Tuple<_Types...>& tpl
-    ) noexcept( std::is_nothrow_constructible<_Type, _Types...>::value )
+    ) noexcept
     {
         using _CleanType = typename std::remove_cv<_Type>::type;
 

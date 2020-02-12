@@ -5,8 +5,8 @@
 // 
 struct TwoFields
 {
-    int field1;
-    int field2;
+    char field1;
+    int  field2;
 };
 #define TwoFieldsCorrectAnswer 2
 
@@ -106,10 +106,10 @@ TEST(GetTypeIds, Correctness)
 {
     constexpr auto ids = GetTypeIds<TwoFields>();
 
-    EXPECT_EQ( ids.size(),  2 );
+    EXPECT_EQ( ids.size(),  2  );
 
-    EXPECT_EQ( ids.data[0], 8 );
-    EXPECT_EQ( ids.data[1], 8 );
+    EXPECT_EQ( ids.data[0], 11 );
+    EXPECT_EQ( ids.data[1], 8  );
 }
 
 TEST(GetTypeIds, ContainsEnum)
@@ -137,12 +137,12 @@ TEST(GetTypeIds, NestedStruct)
 
 TEST(ToTuple, Correctness)
 {
-    TwoFields two_fields{ 2, 4 };
+    TwoFields two_fields{ 'a', 4 };
 
     auto two_tpl = ToTuple( two_fields );
 
-    EXPECT_EQ( types::get<0>( two_tpl ), 2 );
-    EXPECT_EQ( types::get<1>( two_tpl ), 4 );
+    EXPECT_EQ( types::get<0>( two_tpl ), 'a' );
+    EXPECT_EQ( types::get<1>( two_tpl ), 4   );
 
     TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
 
@@ -177,7 +177,7 @@ TEST(ToTuple, NestedStruct)
 
     auto three_tpl = ToTuple( three_fields );
 
-	EXPECT_EQ( sizeof( three_tpl ), sizeof( three_fields ) );
+    EXPECT_EQ( sizeof( three_tpl ), sizeof( three_fields ) );
 
     EXPECT_EQ( three_tpl.Size(), 4 );
 

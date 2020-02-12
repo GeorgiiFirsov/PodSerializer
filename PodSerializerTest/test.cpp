@@ -1,7 +1,5 @@
 #include "pch.h"
 
-#include "../PodSerializer/Utils.h"
-using reflection::utils::_GetIdsRaw_Impl;
 // 
 // Two fields in structure
 // 
@@ -108,6 +106,8 @@ TEST(GetTypeIds, Correctness)
 {
     constexpr auto ids = GetTypeIds<TwoFields>();
 
+    EXPECT_EQ( ids.size(),  2 );
+
     EXPECT_EQ( ids.data[0], 8 );
     EXPECT_EQ( ids.data[1], 8 );
 }
@@ -116,9 +116,23 @@ TEST(GetTypeIds, ContainsEnum)
 {
     constexpr auto ids = GetTypeIds<ThreeFieldsWithEnum>();
 
+    EXPECT_EQ( ids.size(),   3 );
+
     EXPECT_EQ( ids.data[0], 11 );
     EXPECT_EQ( ids.data[1],  5 );
     EXPECT_EQ( ids.data[2],  8 );
+}
+
+TEST(GetTypeIds, NestedStruct)
+{
+    constexpr auto ids = GetTypeIds<ThreeFieldsWithNestedStruct>();
+
+    EXPECT_EQ( ids.size(), 4 );
+
+    EXPECT_EQ( ids.data[0], 16 );
+    EXPECT_EQ( ids.data[1],  8 );
+    EXPECT_EQ( ids.data[2], 11 );
+    EXPECT_EQ( ids.data[3], 11 );
 }
 
 TEST(ToTuple, Correctness)
@@ -157,10 +171,26 @@ TEST(ToTuple, ContainsEnum)
     EXPECT_EQ( types::get<2>( three_tpl ), second2 );
 }
 
+TEST(ToTuple, NestedStruct)
+{
+    ThreeFieldsWithNestedStruct three_fields{ 3.14, { 10, 'a' }, 'b' };
 
-/************************************************************************************
- * Visual stream operators tests
- */
+    auto three_tpl = ToTuple( three_fields );
+
+	EXPECT_EQ( sizeof( three_tpl ), sizeof( three_fields ) );
+
+    EXPECT_EQ( three_tpl.Size(), 4 );
+
+    EXPECT_EQ( types::get<0>( three_tpl ), 3.14 );
+    EXPECT_EQ( types::get<1>( three_tpl ), 10   );
+    EXPECT_EQ( types::get<2>( three_tpl ), 'a'  );
+    EXPECT_EQ( types::get<3>( three_tpl ), 'b'  );
+}
+
+// 
+// /************************************************************************************
+//  * Visual stream operators tests
+//  */
 
 TEST(Operators, ostream)
 {
@@ -185,9 +215,9 @@ TEST(Operators, wostream)
 }
 
 
-/************************************************************************************
- * Serialization tests
- */
+// /************************************************************************************
+//  * Serialization tests
+//  */
 
 TEST(Serialization, Binary)
 {
@@ -212,7 +242,7 @@ TEST(Serialization, Binary)
     EXPECT_EQ( loaded.field1, original.field1 );
     EXPECT_EQ( loaded.field2, original.field2 );
 }
-
+ 
 TEST(Serialization, BinaryContainsEnum)
 {
     ThreeFieldsWithEnum original{ 'a', first1, second2 };

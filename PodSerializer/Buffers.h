@@ -4,7 +4,6 @@
 
 #include "Reflection.h"
 #include "Tuple.h"
-#include "Utils.h"
 
 
 namespace serialization {
@@ -97,8 +96,8 @@ namespace serialization {
             size_t... _Idxs /* Indices */
         > void _Load_Impl( value_t& obj, std::index_sequence<_Idxs...> /* indices */ )
         {
-            using reflection::utils::SizeT;
-            using reflection::utils::_GetTypeById;
+            using reflection::details::SizeT;
+            using reflection::details::_GetTypeById;
             using reflection::GetTypeIds;
             using reflection::FromTuple;
             using types::Tuple;
@@ -230,8 +229,8 @@ namespace serialization {
             size_t... _Idxs /* Indices */
         > void _Load_Impl( value_t& obj, std::index_sequence<_Idxs...> /* indices */ )
         {
-            using reflection::utils::SizeT;
-            using reflection::utils::_GetTypeById;
+            using reflection::details::SizeT;
+            using reflection::details::_GetTypeById;
             using reflection::GetTypeIds;
             using reflection::FromTuple;
             using types::Tuple;

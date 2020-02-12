@@ -157,15 +157,18 @@
   <ItemGroup>
     <ClInclude Include="Buffers.h" />
     <ClInclude Include="Config.h" />
+    <ClInclude Include="FromTuple.h" />
+    <ClInclude Include="GetFieldsCount.h" />
+    <ClInclude Include="GetTypeIds.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Reflection.h" />
-    <ClInclude Include="ReflectionInternal.h" />
+    <ClInclude Include="RegisteredTypeTrait.h" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="SizeTArray.h" />
     <ClInclude Include="StreamOperators.h" />
     <ClInclude Include="Support.h" />
+    <ClInclude Include="ToTuple.h" />
     <ClInclude Include="Tuple.h" />
-    <ClInclude Include="Utils.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

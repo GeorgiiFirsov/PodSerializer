@@ -143,6 +143,8 @@ namespace {
             std::make_index_sequence<sizeof...(_Types)>,
             _Types...
         >::_Tuple_Impl;
+
+        constexpr size_t Size() { return sizeof...( _Types ); }
     };
 
     /************************************************************************************/

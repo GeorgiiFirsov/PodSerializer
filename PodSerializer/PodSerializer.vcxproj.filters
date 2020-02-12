@@ -36,16 +36,10 @@
     <ClInclude Include="Reflection.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
-    <ClInclude Include="ReflectionInternal.h">
-      <Filter>Header Files\Reflection</Filter>
-    </ClInclude>
     <ClInclude Include="SizeTArray.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Tuple.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
-    <ClInclude Include="Utils.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
     <ClInclude Include="Support.h">
@@ -56,6 +50,21 @@
     </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisteredTypeTrait.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="GetFieldsCount.h">
+      <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="GetTypeIds.h">
+      <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="ToTuple.h">
+      <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="FromTuple.h">
+      <Filter>Header Files\Reflection</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

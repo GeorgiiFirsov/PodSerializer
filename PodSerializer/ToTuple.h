@@ -21,6 +21,8 @@
 namespace reflection {
 namespace details {
 
+    /************************************************************************************/
+
     template<
         typename _Type
     > constexpr size_t GetTotalFieldsCount() noexcept
@@ -39,6 +41,8 @@ namespace details {
         std::index_sequence<_Idxs...> /* indices */ 
     ) noexcept
     {
+        using types::ArrayToIndices;
+        using types::SizeTArray;
         using types::Tuple;
         using types::get;
 
@@ -55,17 +59,50 @@ namespace details {
             decltype( _GetTypeById( SizeT<get<_Idxs>( ids )>{} ) )...
         >;
 
-        tuple_t tpl;
-        size_t offset = 0;
+        //
+        // This is the case, when tuple and structure have the same layout.
+        // It is possible when they have equal size, because they contain
+        // the same types in the same order.
+        // Here we can just cast structure to a tuple. ( Black magic }-) )
+        // 
+        if (sizeof( tuple_t ) == sizeof( _Type )){
+            auto pObj = static_cast<const void*>( &obj );
+            return *static_cast<const tuple_t*>( pObj );
+        }
 
-        auto PutAligned = [src = reinterpret_cast<const char*>( &obj ), &offset]( auto& element ) 
+        //
+        // The key-concept of working with nested structs:
+        // - They completely break contiguous aligning of data.
+        // - We can find out a minimal possible offset of each field
+        //   by counting sizes of previous fields.
+        // - If this minimal offset match the property offset % alignof( _Type )
+        //   it is the place, where our data is stored.
+        // - Otherwise we need to find closest largest offset with property above.
+        // 
+
+        constexpr auto idsRaw = _GetIdsRaw_Impl<_Type>( 
+            std::make_index_sequence<GetFieldsCount<_Type>()>{} 
+        );
+
+        constexpr SizeTArray<idsRaw.size()> offsets{ { 0 } };
+
+        constexpr ArrayToIndices<idsRaw.size()> transform{
+            const_cast<size_t*>( idsRaw.data ),
+            const_cast<size_t*>( offsets.data )
+        };
+        transform.Run();
+
+        tuple_t tpl;
+        size_t index = 0;
+
+        auto PutAligned = [src = reinterpret_cast<const char*>( &obj ), &index, &offsets]( auto& element ) 
         {
             using element_t = typename std::decay<decltype( element )>::type;
 
+            size_t offset = offsets.data[index++];
             while (offset % alignof( element_t ) != 0) offset++;
-            
+
             element = *reinterpret_cast<const element_t*>( src + offset );
-            offset += sizeof( element_t );
         };
 
         types::for_each( tpl, PutAligned );

@@ -58,6 +58,22 @@ struct ThreeFieldsWithNestedStruct
 };
 #define ThreeFieldsWithNestedStructCorrectAnswer 3
 
+//
+// Two levels of nested structs
+// 
+struct NestedWithNested
+{
+    char   field1;
+    Nested field2;
+};
+
+struct TwoFieldsTwoLevelsOfNestedStructs
+{
+    long long field1;
+    NestedWithNested field2;
+};
+#define TwoFieldsTwoLevelsOfNestedStructsCorrectAnswer 2
+
 
 /************************************************************************************
  * Reflection tests
@@ -102,6 +118,26 @@ TEST(GetFieldsCount, ContainsEnum)
     );
 }
 
+TEST(GetFieldsCount, ContainsNested)
+{
+    ThreeFieldsWithNestedStruct three_fields;
+
+    EXPECT_EQ(
+        GetFieldsCount( three_fields ),
+        ThreeFieldsWithNestedStructCorrectAnswer
+    );
+}
+
+TEST(GetFieldsCount, TwoLevelsOfNested)
+{
+    TwoFieldsTwoLevelsOfNestedStructs two_fields;
+
+    EXPECT_EQ(
+        GetFieldsCount( two_fields ),
+        TwoFieldsTwoLevelsOfNestedStructsCorrectAnswer
+    );
+}
+
 TEST(GetTypeIds, Correctness)
 {
     constexpr auto ids = GetTypeIds<TwoFields>();
@@ -132,6 +168,18 @@ TEST(GetTypeIds, NestedStruct)
     EXPECT_EQ( ids.data[0], 16 );
     EXPECT_EQ( ids.data[1],  8 );
     EXPECT_EQ( ids.data[2], 11 );
+    EXPECT_EQ( ids.data[3], 11 );
+}
+
+TEST(GetTypeIds, TwoLevelsOfNested)
+{
+    constexpr auto ids = GetTypeIds<TwoFieldsTwoLevelsOfNestedStructs>();
+
+    EXPECT_EQ( ids.size(), 4 );
+
+    EXPECT_EQ( ids.data[0], 10 );
+    EXPECT_EQ( ids.data[1], 11 );
+    EXPECT_EQ( ids.data[2],  8 );
     EXPECT_EQ( ids.data[3], 11 );
 }
 
@@ -177,8 +225,6 @@ TEST(ToTuple, NestedStruct)
 
     auto three_tpl = ToTuple( three_fields );
 
-    EXPECT_EQ( sizeof( three_tpl ), sizeof( three_fields ) );
-
     EXPECT_EQ( three_tpl.Size(), 4 );
 
     EXPECT_EQ( types::get<0>( three_tpl ), 3.14 );
@@ -187,7 +233,21 @@ TEST(ToTuple, NestedStruct)
     EXPECT_EQ( types::get<3>( three_tpl ), 'b'  );
 }
 
-// 
+TEST(ToTuple, TwoLevelsOfNested)
+{
+    TwoFieldsTwoLevelsOfNestedStructs three_fields{ 56, { 'a', { 8, 'b' } } };
+
+    auto three_tpl = ToTuple( three_fields );
+
+    EXPECT_EQ( three_tpl.Size(), 4 );
+
+    EXPECT_EQ( types::get<0>( three_tpl ), 56  );
+    EXPECT_EQ( types::get<1>( three_tpl ), 'a' );
+    EXPECT_EQ( types::get<2>( three_tpl ), 8   );
+    EXPECT_EQ( types::get<3>( three_tpl ), 'b' );
+}
+
+ 
 // /************************************************************************************
 //  * Visual stream operators tests
 //  */

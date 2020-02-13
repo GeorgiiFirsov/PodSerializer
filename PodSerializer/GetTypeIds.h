@@ -180,8 +180,7 @@ namespace details {
 
         template<
             typename _Type /* Type to be initialized and indexed */
-        > constexpr operator _Type()
-            const noexcept( std::is_nothrow_constructible<_Type>::value )
+        > constexpr operator _Type() const noexcept
         {
             _Cast_Impl<_Type>();
             return _Type{};
@@ -233,7 +232,7 @@ namespace details {
         size_t... _Idxs  /* Indices of internal types */
     > constexpr auto _GetTypeIds_Impl( std::index_sequence<_Idxs...> indices ) noexcept
     {
-        using types::ArrayTransformer;
+        using types::ArrayToNonZeros;
         using types::SizeTArray;
 
         //
@@ -247,7 +246,7 @@ namespace details {
         // 
         constexpr SizeTArray<idsRaw.CountNonZeros()> idsWithoutZeros{ { 0 } };
 
-        constexpr ArrayTransformer<sizeof( _Type )> transform{ 
+        constexpr ArrayToNonZeros<sizeof( _Type )> transform{ 
             const_cast<size_t*>( idsRaw.data ), 
             const_cast<size_t*>( idsWithoutZeros.data ) 
         };

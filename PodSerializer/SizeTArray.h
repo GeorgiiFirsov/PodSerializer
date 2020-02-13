@@ -51,7 +51,7 @@ namespace types {
     template<
         size_t _Idx  /* Index of element to get */,
         size_t _Size /* Size of array */
-    > constexpr size_t get( const SizeTArray<_Size>& array )
+    > constexpr size_t get( const SizeTArray<_Size>& array ) noexcept
     {
         static_assert( _Idx < _Size, "Out of range in " __FUNCTION__ );
         return array.data[_Idx];
@@ -67,7 +67,7 @@ namespace types {
         size_t _Size1    /* Size of first array (source) */,
         size_t _Idx1 = 0 /* Current index in first array (source) */,
         size_t _Idx2 = 0 /* Current index in second array (destination) */
-    > struct ArrayTransformer
+    > struct ArrayToNonZeros
     {
         size_t* pFirst;  // Pointer to first array
         size_t* pSecond; // Pointer to second array
@@ -91,7 +91,7 @@ namespace types {
                     //
                     // Instantiate next transformer with incremented indices and run transformation
                     // 
-                    ArrayTransformer<_Size1, _Idx1 + 1, _Idx2 + 1> next{ pFirst, pSecond };
+                    ArrayToNonZeros<_Size1, _Idx1 + 1, _Idx2 + 1> next{ pFirst, pSecond };
                     next.Run();
                 }
                 else 
@@ -99,7 +99,7 @@ namespace types {
                     //
                     // Instantiate next transformer with incremented first index and run transformation
                     // 
-                    ArrayTransformer<_Size1, _Idx1 + 1, _Idx2> next{ pFirst, pSecond };
+                    ArrayToNonZeros<_Size1, _Idx1 + 1, _Idx2> next{ pFirst, pSecond };
                     next.Run();
                 }
             }
@@ -114,7 +114,73 @@ namespace types {
     template<
         size_t _Size1 /* Size of source */,
         size_t _Idx2  /* Index in destination */
-    > struct ArrayTransformer<_Size1, _Size1, _Idx2>
+    > struct ArrayToNonZeros<_Size1, _Size1, _Idx2>
+    {
+        size_t* pFirst;
+        size_t* pSecond;
+
+        constexpr void Run() const noexcept
+        { /* Empty */ }
+    };
+
+    /************************************************************************************/
+
+    //
+    // Helper class to save indices of non-zero elements
+    // from the first array to the second one.
+    // 
+    template<
+        size_t _Size1    /* Size of first array (source) */,
+        size_t _Idx1 = 0 /* Current index in first array (source) */,
+        size_t _Idx2 = 0 /* Current index in second array (destination) */
+    > struct ArrayToIndices
+    {
+        size_t* pFirst;  // Pointer to first array
+        size_t* pSecond; // Pointer to second array
+
+        //
+        // Recursive transformation
+        // 
+        constexpr void Run() const noexcept
+        {
+#pragma warning(push)
+#pragma warning(disable: 4127) // conditional expression is constant
+            if (_Idx1 < _Size1)
+            {
+                if (pFirst[_Idx1])
+                {
+                    //
+                    // Write non-zero value's index to destination.
+                    // 
+                    const_cast<size_t*>( pSecond )[_Idx2] = _Idx1;
+
+                    //
+                    // Instantiate next transformer with incremented indices and run transformation
+                    // 
+                    ArrayToIndices<_Size1, _Idx1 + 1, _Idx2 + 1> next{ pFirst, pSecond };
+                    next.Run();
+                }
+                else
+                {
+                    //
+                    // Instantiate next transformer with incremented first index and run transformation
+                    // 
+                    ArrayToIndices<_Size1, _Idx1 + 1, _Idx2> next{ pFirst, pSecond };
+                    next.Run();
+                }
+            }
+#pragma warning(pop)
+        }
+    };
+
+    //
+    // Specialization to break recursive instantiation
+    // when we reach end of the first array.
+    // 
+    template<
+        size_t _Size1 /* Size of source */,
+        size_t _Idx2  /* Index in destination */
+    > struct ArrayToIndices<_Size1, _Size1, _Idx2>
     {
         size_t* pFirst;
         size_t* pSecond;

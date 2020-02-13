@@ -33,7 +33,7 @@ namespace serialization {
         BinaryBuffer( BinaryBuffer<_Type>&& ) = default;
         BinaryBuffer& operator= ( BinaryBuffer<_Type>&& ) = default;
 
-        bool IsEmpty()
+        bool IsEmpty() const noexcept
         {
             return !m_isFull;
         }
@@ -174,12 +174,12 @@ namespace serialization {
         BasicStringStreamBuffer( BasicStringStreamBuffer<_Type, _Char, _Traits, _Allocator>&& ) = default;
         BasicStringStreamBuffer& operator= ( BasicStringStreamBuffer<_Type, _Char, _Traits, _Allocator>&& ) = default;
 
-        bool IsEmpty()
+        bool IsEmpty() const noexcept
         {
             return !m_isFull;
         }
 
-        void Clear()
+        void Clear() noexcept
         {
             m_isFull = false;
         }

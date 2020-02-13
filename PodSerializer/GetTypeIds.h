@@ -103,6 +103,9 @@ namespace details {
     constexpr typename std::enable_if<is_supported_type<_Type>::value, types::SizeTArray<sizeof( _Type )>>::type
     _GetIdsByType( IdenticalType<_Type> ) noexcept
     {
+        //
+        // See definition of '_GetIdsRaw_Impl' below.
+        // 
         return _GetIdsRaw_Impl<_Type>( 
             std::make_index_sequence<GetFieldsCount<_Type>()>{}
         );
@@ -112,11 +115,11 @@ namespace details {
 
     //
     // This structure used to write array of offsets
-    // of types in structure.
+    // of fields in structure.
     // 
     template<
         size_t _Idx  /* Index of type inside of structure */,
-        size_t _Size /* Size of array of offsets (actually, an amount of fields in structure) */
+        size_t _Size /* Size of array of offsets (actually, a number of fields in structure) */
     > struct _OffsetsUniversalInit
     {
         size_t* pOffsets; // Pointer to the beginning of offsets array
@@ -127,7 +130,7 @@ namespace details {
         > constexpr operator _Type() const noexcept
         {
             const_cast<size_t*>( pOffsets )[_Idx] = _Idx != 0 ? pOffsets[_Idx - 1] + pSizes[_Idx - 1] : 0;
-            const_cast<size_t*>( pSizes )[_Idx] = sizeof(_Type);
+            const_cast<size_t*>( pSizes )[_Idx] = sizeof( _Type );
             return _Type{};
         }
     };
@@ -146,11 +149,17 @@ namespace details {
         // 
         size_t* pTypeIds;
 
+        //
+        // Simply inserts an id into array
+        // 
         constexpr void Assign( size_t id ) const noexcept
         {
             const_cast<size_t*>( pTypeIds )[0] = id;
         }
 
+        //
+        // Merges an array of ids into the external array
+        // 
         template<size_t _IdsCount> 
         constexpr void Assign( const types::SizeTArray<_IdsCount>& ids ) const noexcept
         {
@@ -164,6 +173,11 @@ namespace details {
             }
         }
 
+        //
+        // Function template called from type conversion
+        // operator. It provides the same interface of work
+        // around different types of initialized variables.
+        // 
         template<typename _Type>
         constexpr typename std::enable_if<is_registered_or_aliased<_Type>::value>::type
         _Cast_Impl() const noexcept

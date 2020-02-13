@@ -147,9 +147,9 @@ namespace serialization {
     /************************************************************************************/
 
     //
-    // Basic buffer for stream serialization.
+    // Basic buffer for string stream serialization.
     // It can be specialized and aliased with 
-    // concrete io-stream class template.
+    // concrete I/O stream class template.
     // 
 
     template<

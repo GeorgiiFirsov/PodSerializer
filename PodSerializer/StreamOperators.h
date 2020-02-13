@@ -24,8 +24,8 @@ namespace {
         std::index_sequence<_Idxs...> /* indices */ 
     )
     {
-        using reflection::utils::_GetTypeById;
-        using reflection::utils::SizeT;
+        using reflection::details::_GetTypeById;
+        using reflection::details::SizeT;
         using reflection::GetTypeIds;
         using reflection::FromTuple;
         using types::Tuple;

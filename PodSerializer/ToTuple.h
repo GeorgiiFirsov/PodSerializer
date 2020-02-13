@@ -23,8 +23,12 @@ namespace details {
 
     /************************************************************************************/
 
+    //
+    // Returns total fields number inside a structure of type _Type.
+    // It includes fields in all nested structures.
+    // 
     template<
-        typename _Type
+        typename _Type /* Type to count all fields in */
     > constexpr size_t GetTotalFieldsCount() noexcept
     {
         constexpr auto ids = GetTypeIds<_Type>();
@@ -84,7 +88,11 @@ namespace details {
             std::make_index_sequence<GetFieldsCount<_Type>()>{} 
         );
 
-        constexpr SizeTArray<idsRaw.size()> offsets{ { 0 } };
+        //
+        // Now we need to calculate possible offsets.
+        // Just extract them as indices of non-zero ids.
+        // 
+        constexpr SizeTArray<idsRaw.CountNonZeros()> offsets{ { 0 } };
 
         constexpr ArrayToIndices<idsRaw.size()> transform{
             const_cast<size_t*>( idsRaw.data ),
@@ -92,6 +100,11 @@ namespace details {
         };
         transform.Run();
 
+        //
+        // Now it's time to put values into a tuple.
+        // we know here their offsets (actually we 
+        // can correct them a bit later).
+        // 
         tuple_t tpl;
         size_t index = 0;
 

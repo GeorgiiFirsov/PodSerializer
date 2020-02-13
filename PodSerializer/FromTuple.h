@@ -68,7 +68,7 @@ namespace details {
         // Simply construct object using aggregate initialization.
         // 
         return _Type{ 
-            details::TypeCaster<decltype( get<_Idxs>( tpl ) )>{ get<_Idxs>( tpl ) }... 
+            TypeCaster<decltype( get<_Idxs>( tpl ) )>{ get<_Idxs>( tpl ) }... 
         };
     }
 

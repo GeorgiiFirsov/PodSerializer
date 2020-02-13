@@ -41,8 +41,6 @@ namespace types {
         constexpr size_t CountNonZeros() const noexcept { return 0; }
     };
 
-    #define array_data( _Array ) _Array.data
-
     /************************************************************************************/
 
     //

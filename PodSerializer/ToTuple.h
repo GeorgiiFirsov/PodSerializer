@@ -41,7 +41,7 @@ namespace details {
         typename  _Type /* Type to convert into a tuple */,
         size_t... _Idxs /* Indices of internal types (with expanded nested structures) */
     > constexpr auto _ToTuple_Impl( 
-        _Type& obj /* Object to convert into a structure */, 
+        const _Type& obj /* Object to convert into a structure */, 
         std::index_sequence<_Idxs...> /* indices */ 
     ) noexcept
     {

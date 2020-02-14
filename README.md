@@ -51,7 +51,7 @@ using operators::operator >>;
 MyStruct obj{ 'a', 42 };
 
 std::cout << obj; // Will print "a 42"
-std::cin >> obj;  // Input each field from keyboard and put it directly into 'obj'
+std::cin >> obj;  // Input each field from keyboard and put them directly into 'obj'
 ```
 
 ### Reflection

@@ -96,8 +96,8 @@ assert( types::get<2>( tpl ), obj.field3 );
 
 // Will be printed: "42 3.14 a"
 // It is really important to use a generic lambda (with template invocation function) inside types::for_each
-types::for_each( tpl, []( auto&& elem ) {
-  std::cout << std::forward<decltype( elem )>( elem ) << " ";
+types::for_each( tpl, []( const auto& elem ) {
+  std::cout << elem << " ";
 });
 ```
 

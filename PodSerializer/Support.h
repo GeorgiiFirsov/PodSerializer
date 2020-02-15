@@ -2,6 +2,8 @@
 
 #include "pch.h"
 
+#include "Traits.h"
+
 /************************************************************************************
  * Supported types.
  * 
@@ -18,26 +20,26 @@
 
 template<typename _Type>
 using is_supported_type = \
-    std::conjunction<
-        std::negation<
+    traits::conjunction<
+        traits::negation<
             std::is_reference<_Type>
         >,
-        std::disjunction<
+        traits::disjunction<
             std::is_copy_constructible<_Type>,
-            std::conjunction<
+            traits::conjunction<
                 std::is_move_constructible<_Type>,
                 std::is_move_assignable<_Type>
             >
         >,
-        std::negation<
+        traits::negation<
             std::is_polymorphic<_Type>
         >,
         std::is_pod<_Type>,
-        std::negation<
+        traits::negation<
             std::is_fundamental<_Type>
         >,
         std::is_standard_layout<_Type>,
-        std::negation<
+        traits::negation<
             std::is_empty<_Type>
         >
     >;

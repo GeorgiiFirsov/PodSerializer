@@ -51,9 +51,6 @@
     <ClInclude Include="Config.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RegisteredTypeTrait.h">
-      <Filter>Header Files\Utils</Filter>
-    </ClInclude>
     <ClInclude Include="GetFieldsCount.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
@@ -65,6 +62,9 @@
     </ClInclude>
     <ClInclude Include="FromTuple.h">
       <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
+    <ClInclude Include="Traits.h">
+      <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

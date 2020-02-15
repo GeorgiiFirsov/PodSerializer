@@ -162,7 +162,7 @@
     <ClInclude Include="GetTypeIds.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Reflection.h" />
-    <ClInclude Include="RegisteredTypeTrait.h" />
+    <ClInclude Include="Traits.h" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="SizeTArray.h" />
     <ClInclude Include="StreamOperators.h" />

@@ -5,7 +5,7 @@
 #include "Support.h"
 #include "SizeTArray.h"
 #include "GetFieldsCount.h"
-#include "RegisteredTypeTrait.h"
+#include "Traits.h"
 
 
 /************************************************************************************
@@ -179,14 +179,14 @@ namespace details {
         // around different types of initialized variables.
         // 
         template<typename _Type>
-        constexpr typename std::enable_if<is_registered_or_aliased<_Type>::value>::type
+        constexpr typename std::enable_if<traits::is_registered_or_aliased<_Type>::value>::type
         _Cast_Impl() const noexcept
         {
             Assign( _GetIdByType( IdenticalType<_Type>{} ) );
         }
         
         template<typename _Type>
-        constexpr typename std::enable_if<!is_registered_or_aliased<_Type>::value>::type
+        constexpr typename std::enable_if<!traits::is_registered_or_aliased<_Type>::value>::type
         _Cast_Impl() const noexcept
         {
             Assign( _GetIdsByType<_Type>( IdenticalType<_Type>{} ) );

@@ -1,0 +1,99 @@
+#pragma once
+
+#include "pch.h"
+
+#include <type_traits>
+
+#define TRAIT_REGISTER_TYPE( _Type ) \
+    template<> struct is_registered_type<_Type> : std::true_type { }
+
+namespace traits {
+
+    /************************************************************************************/
+
+    //
+    // Is type registered?
+    // 
+
+    template<typename _Type>
+    struct is_registered_type : std::false_type { };
+
+    TRAIT_REGISTER_TYPE( unsigned char        );
+    TRAIT_REGISTER_TYPE( unsigned short       );
+    TRAIT_REGISTER_TYPE( unsigned int         );
+    TRAIT_REGISTER_TYPE( unsigned long        );
+    TRAIT_REGISTER_TYPE( unsigned long long   );
+    TRAIT_REGISTER_TYPE( signed char          );
+    TRAIT_REGISTER_TYPE( short                );
+    TRAIT_REGISTER_TYPE( int                  );
+    TRAIT_REGISTER_TYPE( long                 );
+    TRAIT_REGISTER_TYPE( long long            );
+    TRAIT_REGISTER_TYPE( char                 );
+    TRAIT_REGISTER_TYPE( wchar_t              );
+    TRAIT_REGISTER_TYPE( char16_t             );
+    TRAIT_REGISTER_TYPE( char32_t             );
+    TRAIT_REGISTER_TYPE( float                );
+    TRAIT_REGISTER_TYPE( double               );
+    TRAIT_REGISTER_TYPE( long double          );
+    TRAIT_REGISTER_TYPE( bool                 );
+    TRAIT_REGISTER_TYPE( void*                );
+    TRAIT_REGISTER_TYPE( const void*          );
+    TRAIT_REGISTER_TYPE( volatile void*       );
+    TRAIT_REGISTER_TYPE( const volatile void* );
+    TRAIT_REGISTER_TYPE( nullptr_t            );
+
+    /************************************************************************************/
+
+    //
+    // Is type a registered type or alias of a registered type?
+    // 
+
+    template<typename _Type>
+    using is_registered_or_aliased = \
+        std::disjunction<
+            is_registered_type<_Type>,
+            std::is_enum<_Type>
+        >;
+
+    /************************************************************************************/
+
+    //
+    // std::conjunction implementation
+    // 
+
+    template<typename... /* _BoolTs */> 
+    struct conjunction : std::true_type { };
+
+    template<typename _BoolT> 
+    struct conjunction<_BoolT> : _BoolT { };
+
+    template<typename _BoolT, typename... _BoolTs>
+    struct conjunction<_BoolT, _BoolTs...>
+        : std::conditional<bool( _BoolT::value ), conjunction<_BoolTs...>, _BoolT>::type { };
+
+    /************************************************************************************/
+
+    //
+    // std::disjunction implementation
+    // 
+
+    template<typename... /* _Bools */> 
+    struct disjunction : std::false_type { };
+
+    template<class _BoolT> 
+    struct disjunction<_BoolT> : _BoolT { };
+
+    template<class _BoolT, class... _BoolTs>
+    struct disjunction<_BoolT, _BoolTs...>
+        : std::conditional_t<bool( _BoolT::value ), _BoolT, disjunction<_BoolTs...>> { };
+
+    /************************************************************************************/
+
+    //
+    // std::negation implementation
+    // 
+
+    template<class _BoolT>
+    struct negation : std::bool_constant<!bool( _BoolT::value )> { };
+
+} // traits

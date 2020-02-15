@@ -1,5 +1,17 @@
 # PodSerializer
 
+| Compiler | Version | Status             | Comments                                                   |
+|----------|---------|--------------------|------------------------------------------------------------|
+| MSVC     | 19.22   | [![Success][]]()   | Main build system.                                         |
+| MSVC     | 19.16   | [![Partial][]]()   | Enumeration types are implicitly replaced with type 'int'. |
+| GCC      | 7.4.0   | [![Partial][]]()   | Not fully tested yet.                                      |
+| CLang    | -       | [![NotTested][]]() |                                                            |
+
+[Success]:   https://img.shields.io/badge/Build%20Status-pass-success
+[Partial]:   https://img.shields.io/badge/Build%20Status-partially%20passed-important
+[Failed]:    https://img.shields.io/badge/Build%20Status-fail-critical
+[NotTested]: https://img.shields.io/badge/Build%20Status-not%20built%20yet-inactive
+
 PodSerializer is actually two-in-one library: it contains various static reflection tools along with classes for serialization of POD's.
 
 > Developing in progress (pointers and bit-fields are not supported now)

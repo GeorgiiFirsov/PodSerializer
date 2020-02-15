@@ -12,6 +12,47 @@ namespace traits {
     /************************************************************************************/
 
     //
+    // std::conjunction implementation
+    // 
+
+    template<typename... /* _BoolTs */> 
+    struct conjunction : std::true_type { };
+
+    template<typename _BoolT> 
+    struct conjunction<_BoolT> : _BoolT { };
+
+    template<typename _BoolT, typename... _BoolTs>
+    struct conjunction<_BoolT, _BoolTs...>
+        : std::conditional<bool( _BoolT::value ), conjunction<_BoolTs...>, _BoolT>::type { };
+
+    /************************************************************************************/
+
+    //
+    // std::disjunction implementation
+    // 
+
+    template<typename... /* _Bools */> 
+    struct disjunction : std::false_type { };
+
+    template<class _BoolT> 
+    struct disjunction<_BoolT> : _BoolT { };
+
+    template<class _BoolT, class... _BoolTs>
+    struct disjunction<_BoolT, _BoolTs...>
+        : std::conditional<bool( _BoolT::value ), _BoolT, disjunction<_BoolTs...>>::type { };
+
+    /************************************************************************************/
+
+    //
+    // std::negation implementation
+    // 
+
+    template<class _BoolT>
+    struct negation : std::integral_constant<bool, !bool( _BoolT::value )> { };
+
+    /************************************************************************************/
+
+    //
     // Is type registered?
     // 
 
@@ -50,50 +91,9 @@ namespace traits {
 
     template<typename _Type>
     using is_registered_or_aliased = \
-        std::disjunction<
+        disjunction<
             is_registered_type<_Type>,
             std::is_enum<_Type>
         >;
-
-    /************************************************************************************/
-
-    //
-    // std::conjunction implementation
-    // 
-
-    template<typename... /* _BoolTs */> 
-    struct conjunction : std::true_type { };
-
-    template<typename _BoolT> 
-    struct conjunction<_BoolT> : _BoolT { };
-
-    template<typename _BoolT, typename... _BoolTs>
-    struct conjunction<_BoolT, _BoolTs...>
-        : std::conditional<bool( _BoolT::value ), conjunction<_BoolTs...>, _BoolT>::type { };
-
-    /************************************************************************************/
-
-    //
-    // std::disjunction implementation
-    // 
-
-    template<typename... /* _Bools */> 
-    struct disjunction : std::false_type { };
-
-    template<class _BoolT> 
-    struct disjunction<_BoolT> : _BoolT { };
-
-    template<class _BoolT, class... _BoolTs>
-    struct disjunction<_BoolT, _BoolTs...>
-        : std::conditional_t<bool( _BoolT::value ), _BoolT, disjunction<_BoolTs...>> { };
-
-    /************************************************************************************/
-
-    //
-    // std::negation implementation
-    // 
-
-    template<class _BoolT>
-    struct negation : std::bool_constant<!bool( _BoolT::value )> { };
 
 } // traits

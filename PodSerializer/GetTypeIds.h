@@ -90,7 +90,7 @@ namespace details {
         // and assume it as type of a field.
         // 
         return _GetIdByType( 
-            utils::IdenticalType<typename std::underlying_type<_Type>::type> 
+            IdenticalType<typename std::underlying_type<_Type>::type> 
         );
     }
 

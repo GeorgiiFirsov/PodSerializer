@@ -115,6 +115,29 @@ types::for_each( tpl, []( const auto& elem ) {
 
 ##### Example #3
 ```cpp
+#include <tuple>
+
+#include "Reflection.h"
+#include "Tuple.h"
+
+// ...
+
+MyStruct obj{ 42, 3.14, 'a' };
+
+// You can convert your struct into a standard tuple
+auto tpl = reflection::ToStandardTuple( obj ); // tpl is instance of type std::tuple<int, double, char>
+
+assert( std::get<0>( tpl ), obj.field1 ); // Tuple contains exactly the same values as 'obj'
+assert( std::get<1>( tpl ), obj.field2 );
+assert( std::get<2>( tpl ), obj.field3 );
+
+//
+// Moreover you can use ToStdTuple function to convert types::Typle into corresponding std::tuple
+//
+```
+
+##### Example #4
+```cpp
 #include "Reflection.h"
 #include "Tuple.h"
 

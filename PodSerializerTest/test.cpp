@@ -142,7 +142,7 @@ TEST(GetTypeIds, Correctness)
 {
     constexpr auto ids = GetTypeIds<TwoFields>();
 
-    EXPECT_EQ( ids.size(),  2  );
+    EXPECT_EQ( ids.Size(),  2  );
 
     EXPECT_EQ( ids.data[0], 11 );
     EXPECT_EQ( ids.data[1], 8  );
@@ -152,7 +152,7 @@ TEST(GetTypeIds, ContainsEnum)
 {
     constexpr auto ids = GetTypeIds<ThreeFieldsWithEnum>();
 
-    EXPECT_EQ( ids.size(),   3 );
+    EXPECT_EQ( ids.Size(),   3 );
 
     EXPECT_EQ( ids.data[0], 11 );
     EXPECT_EQ( ids.data[1],  5 );
@@ -163,7 +163,7 @@ TEST(GetTypeIds, NestedStruct)
 {
     constexpr auto ids = GetTypeIds<ThreeFieldsWithNestedStruct>();
 
-    EXPECT_EQ( ids.size(), 4 );
+    EXPECT_EQ( ids.Size(), 4 );
 
     EXPECT_EQ( ids.data[0], 16 );
     EXPECT_EQ( ids.data[1],  8 );
@@ -175,7 +175,7 @@ TEST(GetTypeIds, TwoLevelsOfNested)
 {
     constexpr auto ids = GetTypeIds<TwoFieldsTwoLevelsOfNestedStructs>();
 
-    EXPECT_EQ( ids.size(), 4 );
+    EXPECT_EQ( ids.Size(), 4 );
 
     EXPECT_EQ( ids.data[0], 10 );
     EXPECT_EQ( ids.data[1], 11 );
@@ -247,10 +247,70 @@ TEST(ToTuple, TwoLevelsOfNested)
     EXPECT_EQ( types::get<3>( three_tpl ), 'b' );
 }
 
+TEST(ToStandardTuple, Correctness)
+{
+    TwoFields two_fields{ 'a', 4 };
+
+    auto two_tpl = ToStandardTuple( two_fields );
+
+    EXPECT_EQ( std::get<0>( two_tpl ), 'a' );
+    EXPECT_EQ( std::get<1>( two_tpl ), 4   );
+
+    TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
+
+    auto ten_tpl = ToStandardTuple( ten_fields );
+
+    EXPECT_EQ( std::get<0>( ten_tpl ), 'a'  );
+    EXPECT_EQ( std::get<1>( ten_tpl ), 25   );
+    EXPECT_EQ( std::get<2>( ten_tpl ), 4    );
+    EXPECT_EQ( std::get<3>( ten_tpl ), 3.14 );
+    EXPECT_EQ( std::get<4>( ten_tpl ), 0    );
+    EXPECT_EQ( std::get<5>( ten_tpl ), 'b'  );
+    EXPECT_EQ( std::get<6>( ten_tpl ), 54   );
+    EXPECT_EQ( std::get<7>( ten_tpl ), 32   );
+    EXPECT_EQ( std::get<8>( ten_tpl ), 2.71 );
+    EXPECT_EQ( std::get<9>( ten_tpl ), 9    );
+}
+
+TEST(ToStandardTuple, ContainsEnum)
+{
+    ThreeFieldsWithEnum three_fields = { 'a', first1, second2 };
+
+    auto three_tpl = ToStandardTuple( three_fields );
+
+    EXPECT_EQ( std::get<0>( three_tpl ), 'a'     );
+    EXPECT_EQ( std::get<1>( three_tpl ), first1  );
+    EXPECT_EQ( std::get<2>( three_tpl ), second2 );
+}
+
+TEST(ToStandardTuple, NestedStruct)
+{
+    ThreeFieldsWithNestedStruct three_fields{ 3.14, { 10, 'a' }, 'b' };
+
+    auto three_tpl = ToStandardTuple( three_fields );
+
+    EXPECT_EQ( std::get<0>( three_tpl ), 3.14 );
+    EXPECT_EQ( std::get<1>( three_tpl ), 10   );
+    EXPECT_EQ( std::get<2>( three_tpl ), 'a'  );
+    EXPECT_EQ( std::get<3>( three_tpl ), 'b'  );
+}
+
+TEST(ToStandardTuple, TwoLevelsOfNested)
+{
+    TwoFieldsTwoLevelsOfNestedStructs three_fields{ 56, { 'a', { 8, 'b' } } };
+
+    auto three_tpl = ToStandardTuple( three_fields );
+
+    EXPECT_EQ( std::get<0>( three_tpl ), 56  );
+    EXPECT_EQ( std::get<1>( three_tpl ), 'a' );
+    EXPECT_EQ( std::get<2>( three_tpl ), 8   );
+    EXPECT_EQ( std::get<3>( three_tpl ), 'b' );
+}
+
  
-// /************************************************************************************
-//  * Visual stream operators tests
-//  */
+/************************************************************************************
+ * Visual stream operators tests
+ */
 
 TEST(Operators, ostream)
 {
@@ -275,9 +335,9 @@ TEST(Operators, wostream)
 }
 
 
-// /************************************************************************************
-//  * Serialization tests
-//  */
+/************************************************************************************
+ * Serialization tests
+ */
 
 TEST(Serialization, Binary)
 {
@@ -377,4 +437,61 @@ TEST(Serialization, StringStreamContainsEnum)
     EXPECT_EQ( loaded.field1, original.field1 );
     EXPECT_EQ( loaded.field2, original.field2 );
     EXPECT_EQ( loaded.field3, original.field3 );
+}
+
+
+/************************************************************************************
+ * Typelist tests
+ */
+
+TEST(TypeList, Size)
+{
+    TypeList<double, int, std::string, short> tl;
+
+    EXPECT_EQ( Size( tl ), 4 );
+
+    EmptyTypeList empty;
+
+    EXPECT_EQ( Size( empty ), 0 );
+}
+
+TEST(TypeList, get)
+{
+    TypeList<double, int, std::string, short> tl;
+
+    EXPECT_EQ( get<0>( tl ), Identity<double>{} );
+    EXPECT_EQ( get<1>( tl ), Identity<int>{} );
+    EXPECT_EQ( get<2>( tl ), Identity<std::string>{} );
+    EXPECT_EQ( get<3>( tl ), Identity<short>{} );
+}
+
+TEST(TypeList, TupleType)
+{
+    TypeList<double, int, std::string, short> tl;
+    using ExpectedType = Tuple<double, int, std::string, short>;
+
+    EXPECT_EQ( 
+        Identity<decltype( TupleType( tl ) )>{}, 
+        Identity<ExpectedType>{} 
+    );
+}
+
+
+/************************************************************************************
+ * Tuple tests
+ */
+
+TEST(Tuple, ToStdTuple)
+{
+    Tuple<int, char, double, std::string> tpl{ 42, 'a', 3.14, std::string("Hello") };
+    using ExpectedType = std::tuple<int, char, double, std::string>;
+
+    auto stdTpl = ToStdTuple( tpl );
+
+    EXPECT_EQ( Identity<decltype( stdTpl )>{}, Identity<ExpectedType>{} );
+         
+    EXPECT_EQ( std::get<0>( stdTpl ), types::get<0>( tpl ) );
+    EXPECT_EQ( std::get<1>( stdTpl ), types::get<1>( tpl ) );
+    EXPECT_EQ( std::get<2>( stdTpl ), types::get<2>( tpl ) );
+    EXPECT_EQ( std::get<3>( stdTpl ), types::get<3>( tpl ) );
 }

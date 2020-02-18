@@ -2,6 +2,9 @@
 
 #include "pch.h"
 
+// Standard header with std::tuple
+#include <tuple>
+
 /************************************************************************************
  * Motivation to implement own tuple.
  * 
@@ -13,6 +16,12 @@
  ************************************************************************************/
 
 namespace types {
+
+    //
+    // Forward declaration
+    // 
+    template<typename...> struct Tuple;
+
 namespace {
 
     //
@@ -123,6 +132,70 @@ namespace {
     constexpr _Type&& _get_Impl( _ValueContainer<_Idx, _Type>&& container ) noexcept
     {
         return container.value;
+    }
+
+    /************************************************************************************/
+
+    //
+    // 'ToStdTuple' implementation. 
+    // It is necessary to implement it for all modifications of _Type.
+    // 
+
+    //
+    // lvalue reference
+    // 
+    template<
+        size_t...   _Idxs  /* Indices of stored types and values */,
+        typename... _Types /* Types stored in tuple */
+    >
+    constexpr decltype(auto) _ToStdTuple_Impl( 
+        Tuple<_Types...>& tpl /* Tuple to convert into std::tuple */,
+        std::index_sequence<_Idxs...> /* indices */
+    )
+    {
+        return std::make_tuple( _get_Impl<_Idxs>( tpl )... );
+    }
+
+    //
+    // const lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t... _Idxs, typename... _Types>
+    constexpr decltype(auto) _ToStdTuple_Impl( const Tuple<_Types...>& tpl )
+    {
+        return std::make_tuple( _get_Impl<_Idxs>( tpl )... );
+    }
+
+    //
+    // volatile lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t... _Idxs, typename... _Types>
+    constexpr decltype(auto) _ToStdTuple_Impl( volatile Tuple<_Types...>& tpl )
+    {
+        return std::make_tuple( _get_Impl<_Idxs>( tpl )... );
+    }
+
+    //
+    // const volatile lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t... _Idxs, typename... _Types>
+    constexpr decltype(auto) _ToStdTuple_Impl( const volatile Tuple<_Types...>& tpl )
+    {
+        return std::make_tuple( _get_Impl<_Idxs>( tpl )... );
+    }
+
+    //
+    // rvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<size_t... _Idxs, typename... _Types>
+    constexpr decltype(auto) _ToStdTuple_Impl( Tuple<_Types...>&& tpl )
+    {
+        return std::make_tuple( 
+            _get_Impl<_Idxs>( std::forward<Tuple<_Types...>>( tpl ) )... 
+        );
     }
 
 } // anonymous namespace
@@ -326,6 +399,76 @@ namespace {
     {
         std::forward<_Func>( fn )( get<_Idx>( std::forward<_Tuple>( tpl ) ) );
         for_each<_Idx + 1>( std::forward<_Tuple>( tpl ), std::forward<_Func>( fn ) );
+    }
+
+    /************************************************************************************/
+
+    //
+    // ToStdTuple function, that converts Tuple to std::tuple
+    // 
+
+    //
+    // lvalue reference
+    // 
+    template<
+        typename... _Types /* Types stored in tuple */
+    >
+    constexpr decltype(auto) ToStdTuple( 
+        Tuple<_Types...>& tpl /* Tuple to convert into std::tuple */
+    )
+    {
+        return _ToStdTuple_Impl( 
+            tpl, std::make_index_sequence<sizeof...( _Types )>{} 
+        );
+    }
+
+    //
+    // const lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<typename... _Types>
+    constexpr decltype(auto) ToStdTuple( const Tuple<_Types...>& tpl )
+    {
+        return _ToStdTuple_Impl( 
+            tpl, std::make_index_sequence<sizeof...( _Types )>{} 
+        );
+    }
+
+    //
+    // volatile lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<typename... _Types>
+    constexpr decltype(auto) ToStdTuple( volatile Tuple<_Types...>& tpl )
+    {
+        return _ToStdTuple_Impl( 
+            tpl, std::make_index_sequence<sizeof...( _Types )>{} 
+        );
+    }
+
+    //
+    // const volatile lvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<typename... _Types>
+    constexpr decltype(auto) ToStdTuple( const volatile Tuple<_Types...>& tpl )
+    {
+        return _ToStdTuple_Impl( 
+            tpl, std::make_index_sequence<sizeof...( _Types )>{} 
+        );
+    }
+
+    //
+    // rvalue reference
+    // For some description see 'lvalue reference' above.
+    // 
+    template<typename... _Types>
+    constexpr decltype(auto) ToStdTuple( Tuple<_Types...>&& tpl )
+    {
+        return _ToStdTuple_Impl( 
+            std::forward<Tuple<_Types...>>( tpl ), 
+            std::make_index_sequence<sizeof...( _Types )>{} 
+        );
     }
 
 } // types

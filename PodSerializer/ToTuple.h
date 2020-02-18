@@ -32,7 +32,7 @@ namespace details {
     > constexpr size_t GetTotalFieldsCount() noexcept
     {
         constexpr auto ids = GetTypeIds<_Type>();
-        return ids.size();
+        return ids.Size();
     }
 
     /************************************************************************************/
@@ -94,7 +94,7 @@ namespace details {
         // 
         constexpr SizeTArray<idsRaw.CountNonZeros()> offsets{ { 0 } };
 
-        constexpr ArrayToIndices<idsRaw.size()> transform{
+        constexpr ArrayToIndices<idsRaw.Size()> transform{
             const_cast<size_t*>( idsRaw.data ),
             const_cast<size_t*>( offsets.data )
         };
@@ -142,6 +142,25 @@ namespace details {
         return details::_ToTuple_Impl( 
             obj, std::make_index_sequence<details::GetTotalFieldsCount<_Type>()>{} 
         );
+    }
+
+    template<typename _Type>
+    constexpr  /* Maybe it is possible to construct our tuple in compile-time */
+    decltype(auto) ToStandardTuple(
+         const _Type& obj /* Object to convert into tuple */
+    )
+    {
+        using types::ToStdTuple;
+
+        using _CleanType = typename std::remove_cv<_Type>::type;
+
+        REFLECTION_CHECK_TYPE( _CleanType );
+
+        auto tpl = details::_ToTuple_Impl( 
+            obj, std::make_index_sequence<details::GetTotalFieldsCount<_Type>()>{} 
+        ); 
+
+        return ToStdTuple( tpl );
     }
 
 } // reflection

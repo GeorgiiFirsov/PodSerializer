@@ -15,7 +15,7 @@ namespace types {
     public:
         size_t data[_Size];
 
-        static constexpr size_t size() noexcept { return _Size; }
+        static constexpr size_t Size() noexcept { return _Size; }
 
         constexpr size_t CountNonZeros() const noexcept
         {
@@ -36,7 +36,7 @@ namespace types {
     public:
         size_t data[1]; /* Zero sized arrays are not allowed */
 
-        static constexpr size_t size() noexcept { return 0; }
+        static constexpr size_t Size() noexcept { return 0; }
 
         constexpr size_t CountNonZeros() const noexcept { return 0; }
     };

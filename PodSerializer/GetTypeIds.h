@@ -6,6 +6,7 @@
 #include "SizeTArray.h"
 #include "GetFieldsCount.h"
 #include "Traits.h"
+#include "Misc.h"
 
 
 /************************************************************************************
@@ -29,19 +30,6 @@
 
 namespace reflection {
 namespace details {
-
-    /************************************************************************************/
-
-    //
-    // Converts type to itself
-    // 
-    template<typename _Type>
-    struct Identity {
-        using type = _Type;
-    };
-
-    template<typename _Type>
-    using IdenticalType = typename Identity<_Type>::type;
 
     /************************************************************************************/
 

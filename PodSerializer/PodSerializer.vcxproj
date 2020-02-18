@@ -160,6 +160,7 @@
     <ClInclude Include="FromTuple.h" />
     <ClInclude Include="GetFieldsCount.h" />
     <ClInclude Include="GetTypeIds.h" />
+    <ClInclude Include="Misc.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Reflection.h" />
     <ClInclude Include="Traits.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="Support.h" />
     <ClInclude Include="ToTuple.h" />
     <ClInclude Include="Tuple.h" />
+    <ClInclude Include="TypeList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

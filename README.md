@@ -3,7 +3,7 @@
 | Compiler | Version | Status             | Comments                                                   |
 |----------|---------|--------------------|------------------------------------------------------------|
 | MSVC     | 19.22   | [![Success][]]()   | Main build system.                                         |
-| MSVC     | 19.16   | [![Partial][]]()   | Enumeration types are implicitly replaced with type 'int'. |
+| MSVC     | 19.16   | [![Partial][]]()   | Enumeration types are implicitly replaced with type `int`. |
 | GCC      | 7.4.0   | [![Failed][]]()    | GCC doesn't like modifications of constexpr arrays.        |
 | CLang    | -       | [![NotTested][]]() |                                                            |
 

@@ -1,11 +1,11 @@
 # PodSerializer
 
-| Compiler | Version | Status             | Comments                                                   |
-|----------|---------|--------------------|------------------------------------------------------------|
-| MSVC     | 19.22   | [![Success][]]()   | Main build system.                                         |
-| MSVC     | 19.16   | [![Success][]]()   | Test passed.                                               |
-| GCC      | 6.1     | [![Partial][]]()   | `GetFieldsCount` compiled and tested successfully.         |
-| CLang    | 6.0.0   | [![Partial][]]()   | `GetFieldsCount` compiled and tested successfully.         |
+| Compiler | Version | Status             | Comments                                                               |
+|----------|---------|--------------------|------------------------------------------------------------------------|
+| MSVC     | 19.22   | [![Success][]]()   | Main build system.                                                     |
+| MSVC     | 19.16   | [![Success][]]()   | Test passed.                                                           |
+| GCC      | 6.1     | [![Partial][]]()   | `GetFieldsCount` and `FromTuple` are compiled and tested successfully. |
+| CLang    | 6.0.0   | [![Partial][]]()   | `GetFieldsCount` and `FromTuple` are compiled and tested successfully. |
 
 [Success]:   https://img.shields.io/badge/Build%20Status-pass-success
 [Partial]:   https://img.shields.io/badge/Build%20Status-partially%20passed-important

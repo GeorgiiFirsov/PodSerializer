@@ -4,8 +4,8 @@
 |----------|---------|--------------------|------------------------------------------------------------|
 | MSVC     | 19.22   | [![Success][]]()   | Main build system.                                         |
 | MSVC     | 19.16   | [![Partial][]]()   | Enumeration types are implicitly replaced with type `int`. |
-| GCC      | 7.4.0   | [![Failed][]]()    | GCC doesn't like modifications of constexpr arrays.        |
-| CLang    | -       | [![NotTested][]]() |                                                            |
+| GCC      | 6.1     | [![Partial][]]()   | `GetFieldsCount` compiled and tested successfully.         |
+| CLang    | 6.0.0   | [![Partial][]]()   | `GetFieldsCount` compiled and tested successfully.         |
 
 [Success]:   https://img.shields.io/badge/Build%20Status-pass-success
 [Partial]:   https://img.shields.io/badge/Build%20Status-partially%20passed-important

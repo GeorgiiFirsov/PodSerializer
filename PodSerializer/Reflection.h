@@ -2,6 +2,8 @@
 
 #include "pch.h"
 
+#include "Config.h"
+
 //
 // Just enumeration of headers of 'Reflection' section
 // 

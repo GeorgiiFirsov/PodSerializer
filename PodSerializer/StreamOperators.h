@@ -2,6 +2,8 @@
 
 #include "pch.h"
 
+#include "Config.h"
+
 #include "Reflection.h"
 #include "Tuple.h"
 

@@ -3,7 +3,7 @@
 | Compiler | Version | Status             | Comments                                                   |
 |----------|---------|--------------------|------------------------------------------------------------|
 | MSVC     | 19.22   | [![Success][]]()   | Main build system.                                         |
-| MSVC     | 19.16   | [![Partial][]]()   | Enumeration types are implicitly replaced with type `int`.<br>Fix is known |
+| MSVC     | 19.16   | [![Success][]]()   | Test passed.                                               |
 | GCC      | 6.1     | [![Partial][]]()   | `GetFieldsCount` compiled and tested successfully.         |
 | CLang    | 6.0.0   | [![Partial][]]()   | `GetFieldsCount` compiled and tested successfully.         |
 

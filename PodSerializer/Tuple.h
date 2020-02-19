@@ -321,7 +321,7 @@ namespace {
         // Call function with current element and recursively
         // invoke 'for_each' with incremented index.
         // 
-        std::forward<_Func>( fn )( get<_Idx>( tpl ) );
+        fn( get<_Idx>( tpl ) );
         for_each<_Idx + 1>( tpl, std::forward<_Func>( fn ) );
     }
     
@@ -340,7 +340,7 @@ namespace {
     constexpr typename std::enable_if<_Idx < _Tuple::size>::type 
     for_each( const _Tuple& tpl, _Func&& fn )
     {
-        std::forward<_Func>( fn )( get<_Idx>( tpl ) );
+        fn( get<_Idx>( tpl ) );
         for_each<_Idx + 1>( tpl, std::forward<_Func>( fn ) );
     }
     
@@ -359,7 +359,7 @@ namespace {
     constexpr typename std::enable_if<_Idx < _Tuple::size>::type 
     for_each( volatile _Tuple& tpl, _Func&& fn )
     {
-        std::forward<_Func>( fn )( get<_Idx>( tpl ) );
+        fn( get<_Idx>( tpl ) );
         for_each<_Idx + 1>( tpl, std::forward<_Func>( fn ) );
     }
     
@@ -378,7 +378,7 @@ namespace {
     constexpr typename std::enable_if<_Idx < _Tuple::size>::type 
     for_each( const volatile _Tuple& tpl, _Func&& fn )
     {
-        std::forward<_Func>( fn )( get<_Idx>( tpl ) );
+        fn( get<_Idx>( tpl ) );
         for_each<_Idx + 1>( tpl, std::forward<_Func>( fn ) );
     }
     
@@ -397,7 +397,7 @@ namespace {
     constexpr typename std::enable_if<_Idx < _Tuple::size>::type 
     for_each( _Tuple&& tpl, _Func&& fn )
     {
-        std::forward<_Func>( fn )( get<_Idx>( std::forward<_Tuple>( tpl ) ) );
+        fn( get<_Idx>( std::forward<_Tuple>( tpl ) ) );
         for_each<_Idx + 1>( std::forward<_Tuple>( tpl ), std::forward<_Func>( fn ) );
     }
 

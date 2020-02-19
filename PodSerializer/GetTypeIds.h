@@ -67,22 +67,6 @@ namespace details {
     REFLECTION_REGISTER_TYPE( nullptr_t           , 23 );
 
     //
-    // Overload for enumerations
-    // 
-    template<typename _Type> 
-    constexpr typename std::enable_if<std::is_enum<_Type>::value, size_t>::type
-    _GetIdByType( IdenticalType<_Type> ) noexcept
-    {
-        //
-        // If our structure contains enumeration, just extract an underlying type
-        // and assume it as type of a field.
-        // 
-        return _GetIdByType( 
-            IdenticalType<typename std::underlying_type<_Type>::type> 
-        );
-    }
-
-    //
     // This function used to support nested structures. It returns an
     // array of identifiers recursively. Then this array and external
     // one will be merged
@@ -162,6 +146,31 @@ namespace details {
         }
 
         //
+        // MSVC 19.16: enumerations are implicitly casted to 'unsigned int'.
+        // Corollary is following: we must dispatch calls of '_GetIdByType'
+        // manually in '_IndexedUniversalInit::_Cast_Impl' using tag dispatch.
+        // 
+        template<typename _Type>
+        constexpr void _EnumDispatch( std::true_type /* std::is_enum<_Type> */ ) const noexcept
+        {
+            //
+            // This function template is responsible for enumeration types
+            // 
+            Assign( 
+                _GetIdByType( IdenticalType<std::underlying_type<_Type>::type>{} ) 
+            );
+        }
+
+        template<typename _Type>
+        constexpr void _EnumDispatch( std::false_type /* std::is_enum<_Type> */ ) const noexcept
+        {
+            //
+            // This overload is responsible for fundamental types
+            // 
+            Assign( _GetIdByType( IdenticalType<_Type>{} ) );
+        }
+
+        //
         // Function template called from type conversion
         // operator. It provides the same interface of work
         // around different types of initialized variables.
@@ -170,7 +179,10 @@ namespace details {
         constexpr typename std::enable_if<traits::is_registered_or_aliased<_Type>::value>::type
         _Cast_Impl() const noexcept
         {
-            Assign( _GetIdByType( IdenticalType<_Type>{} ) );
+            //
+            // Here we have fundamental registered type or enumeration.
+            // 
+            _EnumDispatch<_Type>( std::is_enum<_Type>{} );
         }
         
         template<typename _Type>

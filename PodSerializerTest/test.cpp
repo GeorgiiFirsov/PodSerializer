@@ -441,43 +441,6 @@ TEST(Serialization, StringStreamContainsEnum)
 
 
 /************************************************************************************
- * Typelist tests
- */
-
-TEST(TypeList, Size)
-{
-    TypeList<double, int, std::string, short> tl;
-
-    EXPECT_EQ( Size( tl ), 4 );
-
-    EmptyTypeList empty;
-
-    EXPECT_EQ( Size( empty ), 0 );
-}
-
-TEST(TypeList, get)
-{
-    TypeList<double, int, std::string, short> tl;
-
-    EXPECT_EQ( get<0>( tl ), Identity<double>{} );
-    EXPECT_EQ( get<1>( tl ), Identity<int>{} );
-    EXPECT_EQ( get<2>( tl ), Identity<std::string>{} );
-    EXPECT_EQ( get<3>( tl ), Identity<short>{} );
-}
-
-TEST(TypeList, TupleType)
-{
-    TypeList<double, int, std::string, short> tl;
-    using ExpectedType = Tuple<double, int, std::string, short>;
-
-    EXPECT_EQ( 
-        Identity<decltype( TupleType( tl ) )>{}, 
-        Identity<ExpectedType>{} 
-    );
-}
-
-
-/************************************************************************************
  * Tuple tests
  */
 

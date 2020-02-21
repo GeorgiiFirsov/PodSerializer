@@ -17,7 +17,6 @@
 #include "../PodSerializer/Reflection.h"
 #include "../PodSerializer/StreamOperators.h"
 #include "../PodSerializer/Serialization.h"
-#include "../PodSerializer/TypeList.h"
 #include "../PodSerializer/Tuple.h"
 
 
@@ -37,12 +36,6 @@ using serialization::StringStreamBuffer;
 
 using serialization::WStringStreamSerializer;
 using serialization::WStringStreamBuffer;
-
-using type_list::TypeList;
-using type_list::EmptyTypeList;
-using type_list::Size;
-using type_list::get;
-using type_list::TupleType;
 
 using types::Tuple;
 using types::ToStdTuple;

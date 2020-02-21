@@ -170,7 +170,6 @@
     <ClInclude Include="Support.h" />
     <ClInclude Include="ToTuple.h" />
     <ClInclude Include="Tuple.h" />
-    <ClInclude Include="TypeList.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

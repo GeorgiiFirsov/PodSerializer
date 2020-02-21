@@ -14,7 +14,8 @@
  * - Type must be POD.
  * - Type must not be fundamental.
  * - Type must have standard layout.
- * - Type must not be empty
+ * - Type must not be empty.
+ * - Type must be aggregate (this check is available with C++14 only on MSVC).
  *
  ************************************************************************************/
 

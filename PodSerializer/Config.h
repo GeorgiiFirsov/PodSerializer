@@ -5,6 +5,9 @@
 #       error PodSerializer library requires MSVC version 19.16 and above
 #       error Compilers with versions below have some bugs, that prevent using reflection.
 #   endif // _MSC_VER < 1922
+#   if _MSVC_LANG < 201402L
+#       error PodSerializer library requires C++14 language standard support.
+#   endif // _MSVC_LANG < 201402L
 #elif __cplusplus < 201402L
 #   error PodSerializer library requires C++14 language standard support.
 #endif // defined(_MSC_VER)

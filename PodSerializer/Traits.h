@@ -96,4 +96,33 @@ namespace traits {
             std::is_enum<_Type>
         >;
 
+    /************************************************************************************/
+
+    //
+    // MSVC-specific is_aggregate trait
+    // 
+    
+#if defined(_MSC_VER) && _MSC_VER >= 1916
+
+    template<typename _Type>
+    struct is_aggregate 
+        : std::integral_constant<
+            bool, 
+            __is_aggregate(_Type)  // Use compiler intrinsic
+        > 
+    { };
+
+    template<typename _Type>
+    constexpr bool is_aggregate_v = is_aggregate<_Type>::value;
+
+#   define MSVC_IS_AGGREGATE( _Type ) traits::is_aggregate<_Type>
+#   define MSVC_IS_AGGREGATE_V( _Type ) traits::is_aggregate_v<_Type>
+
+#else
+
+#   define MSVC_IS_AGGREGATE( _Type )
+#   define MSVC_IS_AGGREGATE_V( _Type )
+
+#endif
+
 } // traits

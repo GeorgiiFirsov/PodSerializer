@@ -247,7 +247,13 @@ namespace serialization {
             // 
             tuple_t buffer_view;
 
-            auto PutToTuple = [&buffer = m_buffer]( auto& /* non-const lvalue!!! */ element )
+            //
+            // We need to copy buffer not to make buffer
+            // empty after at least one deserialization.
+            // 
+            buffer_t buffer_copy = buffer_t( m_buffer.str() );
+
+            auto PutToTuple = [&buffer = buffer_copy]( auto& /* non-const lvalue!!! */ element )
             {
                 /* Do not use WStringStreamSerializer with types
                  * that contain enums inside. It cause compiler

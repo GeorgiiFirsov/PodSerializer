@@ -19,6 +19,7 @@
 #include "../PodSerializer/Serialization.h"
 #include "../PodSerializer/TypeList.h"
 #include "../PodSerializer/Tuple.h"
+#include "../PodSerializer/GetTypeList.h"
 
 
 //
@@ -51,3 +52,6 @@ using type_list::Apply;
 // ../PodSerializer/Tuple.h
 using types::Tuple;
 using types::ToStdTuple;
+
+//../PodSerializer/GetTypeList.h
+using reflection::GetTypeList;

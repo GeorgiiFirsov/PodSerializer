@@ -2,6 +2,9 @@
 
 #include "pch.h"
 
+#include "Support.h"
+#include "StreamOperators.h"
+#include "IOManipulators.h"
 #include "Reflection.h"
 #include "Tuple.h"
 
@@ -18,6 +21,8 @@ namespace serialization {
         typename _Type /* Type to be stored */
     > class BinaryBuffer
     {
+        REFLECTION_CHECK_TYPE( _Type );
+
         using buffer_t = std::vector<unsigned char>;
         using value_t = _Type;
 
@@ -62,7 +67,7 @@ namespace serialization {
             // Now we convert our structure into a tuple
             // and then walk through all fields with serializing.
             // 
-            auto obj_tpl = ToTuple( obj );
+            auto tpl = ToTuple( obj );
 
             auto SaveToBuffer = [&offset, buffer = m_buffer.data()]( auto&& element )
             {
@@ -70,7 +75,7 @@ namespace serialization {
                 offset += sizeof( element );
             };
 
-            types::for_each( obj_tpl, SaveToBuffer );
+            types::for_each( tpl, SaveToBuffer );
 
             m_isFull = true;
         }
@@ -159,6 +164,8 @@ namespace serialization {
         typename _Allocator = std::allocator<_Char> /* Allocator */
     > class BasicStringStreamBuffer
     {
+        REFLECTION_CHECK_TYPE_EXTENDED( _Type );
+
         using buffer_t = std::basic_stringstream<_Char, _Traits, _Allocator>;
         using value_t = _Type;
 
@@ -166,7 +173,9 @@ namespace serialization {
         BasicStringStreamBuffer()
             : m_isFull( false )
             , m_buffer( buffer_t{} )
-        { }
+        {
+            m_buffer << io_manipulators::io_internal::set_separator( sep );
+        }
 
         BasicStringStreamBuffer( const BasicStringStreamBuffer<_Type, _Char, _Traits, _Allocator>& ) = delete;
         BasicStringStreamBuffer& operator=( const BasicStringStreamBuffer<_Type, _Char, _Traits, _Allocator>& ) = delete;
@@ -184,33 +193,23 @@ namespace serialization {
             m_isFull = false;
         }
 
-        void Save( const value_t& obj )
+        template<typename _Type = value_t>
+        void Save( const _Type& obj )
         {
-            using reflection::ToTuple;
+            using namespace operators;
 
             if (m_isFull) {
                 Clear();
             }
 
-            //
-            // Now we convert our structure into a tuple
-            // and then walk through all fields with serializing.
-            // 
-            auto obj_tpl = ToTuple( obj );
-
-            auto SaveToBuffer = [&buffer = m_buffer, sep = sep]( auto&& element )
-            {
-                buffer << std::forward<std::remove_reference<decltype( element )>::type>( element ) << sep;
-            };
-
-            types::for_each( obj_tpl, SaveToBuffer );
+            m_buffer << obj;
 
             m_isFull = true;
         }
 
         void Load( value_t& obj )
         {
-            using reflection::GetFieldsCount;
+            using namespace operators;
 
             //
             // Check if buffer contains a value.
@@ -219,57 +218,11 @@ namespace serialization {
                 throw std::logic_error( "Buffer is empty" );
             }
 
-            _Load_Impl( 
-                obj, std::make_index_sequence<GetFieldsCount<value_t>()>{} 
-            );
-        }
-
-    private:
-        template<
-            size_t... _Idxs /* Indices */
-        > void _Load_Impl( value_t& obj, std::index_sequence<_Idxs...> /* indices */ )
-        {
-            using reflection::details::SizeT;
-            using reflection::details::_GetTypeById;
-            using reflection::GetTypeIds;
-            using reflection::FromTuple;
-            using types::Tuple;
-            using types::get;
-
-            //
-            // Here we need to know types, stored in storage
-            // 
-            constexpr auto ids = GetTypeIds<value_t>();
-            using tuple_t = Tuple< decltype( _GetTypeById( SizeT<get<_Idxs>( ids )>{} ) )... >;
-
-            //
-            // Now put stored values into tuple
-            // 
-            tuple_t buffer_view;
-
-            //
-            // We need to copy buffer not to make buffer
-            // empty after at least one deserialization.
-            // 
             buffer_t buffer_copy = buffer_t( m_buffer.str() );
 
-            auto PutToTuple = [&buffer = buffer_copy]( auto& /* non-const lvalue!!! */ element )
-            {
-                /* Do not use WStringStreamSerializer with types
-                 * that contain enums inside. It cause compiler
-                 * error here (at least on MSVC 19.22). I guess, it
-                 * is a compler's bug :(
-                 * Try to use StringStreamSerializer with 
-                 * StringStreamBuffer to avoid this problem. */
-                buffer >> element;
-            };
+            buffer_copy >> io_manipulators::io_internal::set_separator( sep );
 
-            types::for_each( buffer_view, PutToTuple );
-
-            //
-            // And finally convert tuple into an object.
-            // 
-            obj = FromTuple<value_t>( buffer_view );
+            buffer_copy >> std::noskipws >> obj;
         }
 
     private:
@@ -282,7 +235,7 @@ namespace serialization {
         //
         // Separator between fields
         // 
-        const char sep = ' ';
+        const _Char sep = 0x0;
 
         //
         // Internal buffer

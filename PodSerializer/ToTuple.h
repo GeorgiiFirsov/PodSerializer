@@ -131,7 +131,7 @@ namespace details {
 
     template<typename _Type> 
     constexpr /* Maybe it is possible to construct our tuple in compile-time */
-    decltype(auto) ToTuple( 
+    auto ToTuple( 
          const _Type& obj /* Object to convert into tuple */
     ) noexcept
     {
@@ -146,7 +146,7 @@ namespace details {
 
     template<typename _Type>
     constexpr  /* Maybe it is possible to construct our tuple in compile-time */
-    decltype(auto) ToStandardTuple(
+    auto ToStandardTuple(
          const _Type& obj /* Object to convert into tuple */
     )
     {

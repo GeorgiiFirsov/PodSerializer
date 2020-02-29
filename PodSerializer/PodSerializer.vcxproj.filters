@@ -78,6 +78,9 @@
     <ClInclude Include="ToTuplePrecise.h">
       <Filter>Header Files\Reflection</Filter>
     </ClInclude>
+    <ClInclude Include="IOManipulators.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

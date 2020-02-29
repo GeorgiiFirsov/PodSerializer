@@ -54,6 +54,10 @@ bool operator==( const Nested& lhs, const Nested& rhs ) {
     return (lhs.field1 == rhs.field1) && (lhs.field2 == rhs.field2);
 }
 
+bool operator!=( const Nested& lhs, const Nested& rhs ) {
+    return (lhs.field1 != rhs.field1) || (lhs.field2 != rhs.field2);
+}
+
 struct ThreeFieldsWithNestedStruct
 {
     double field1;
@@ -92,6 +96,7 @@ struct NotPod
     double field3;
 };
 #define NotPodCorrectAnswer 3
+
 
 /************************************************************************************
  * Reflection tests
@@ -394,7 +399,7 @@ TEST(Operators, ostream)
     TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
 
     std::cout << ten_fields << std::endl;
-    std::cout << flags::beautiful_struct << ten_fields << flags::no_beautiful_struct << std::endl;
+    std::cout << beautiful_struct << ten_fields << no_beautiful_struct << std::endl;
 }
 
 TEST(Operators, wostream)
@@ -405,8 +410,8 @@ TEST(Operators, wostream)
 
     TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
 
-	std::wcout << ten_fields << std::endl;
-	std::wcout << flags::beautiful_struct << ten_fields << flags::no_beautiful_struct << std::endl;
+    std::wcout << ten_fields << std::endl;
+    std::wcout << beautiful_struct << ten_fields << no_beautiful_struct << std::endl;
 }
 
 TEST(Operators, ostreamNotPod)
@@ -418,7 +423,19 @@ TEST(Operators, ostreamNotPod)
     NotPod three_fields{ 'a', "String to print", 3.14 };
 
     std::cout << three_fields << std::endl;
-    std::cout << flags::beautiful_struct << three_fields << flags::no_beautiful_struct << std::endl;
+    std::cout << beautiful_struct << three_fields << no_beautiful_struct << std::endl;
+}
+
+TEST(Operators, ostreamNested)
+{
+    using namespace operators;
+    
+    std::cout << "It is a visual test.\n" << std::endl;
+
+    ThreeFieldsWithNestedStruct three_fields{ 3.14, { 42, 'a' }, 'b' };
+
+    std::cout << three_fields << std::endl;
+    std::cout << beautiful_struct << three_fields << no_beautiful_struct << std::endl;
 }
 
 
@@ -500,6 +517,30 @@ TEST(Serialization, StringStream)
     EXPECT_EQ( loaded.field2, original.field2 );
 }
 
+TEST(Serialization, NestedStruct)
+{
+    ThreeFieldsWithNestedStruct original{ 3.14, { 42, 'a' }, 'b' };
+    
+    StringStreamSerializer<ThreeFieldsWithNestedStruct> serializer;
+    StringStreamBuffer<ThreeFieldsWithNestedStruct> buffer;
+
+    EXPECT_TRUE( buffer.IsEmpty() );
+
+    serializer.Serialize( original, buffer );
+
+    EXPECT_FALSE( buffer.IsEmpty() );
+
+    ThreeFieldsWithNestedStruct loaded{ 2.71, { -5, 'c' }, 'd' };
+
+    EXPECT_NE( loaded.field1, original.field1 );
+    EXPECT_NE( loaded.field2, original.field2 );
+
+    serializer.Deserialize( loaded, buffer );
+
+    EXPECT_EQ( loaded.field1, original.field1 );
+    EXPECT_EQ( loaded.field2, original.field2 );
+}
+
 TEST(Serialization, StringStreamContainsEnum)
 {
     ThreeFieldsWithEnum original{ 'a', first1, second2 };
@@ -514,6 +555,32 @@ TEST(Serialization, StringStreamContainsEnum)
     EXPECT_FALSE( buffer.IsEmpty() );
 
     ThreeFieldsWithEnum loaded{ 'b', second1, first2 };
+
+    EXPECT_NE( loaded.field1, original.field1 );
+    EXPECT_NE( loaded.field2, original.field2 );
+    EXPECT_NE( loaded.field3, original.field3 );
+
+    serializer.Deserialize( loaded, buffer );
+
+    EXPECT_EQ( loaded.field1, original.field1 );
+    EXPECT_EQ( loaded.field2, original.field2 );
+    EXPECT_EQ( loaded.field3, original.field3 );
+}
+
+TEST(Serialization, StringStreamNotPod)
+{
+    NotPod original{ 'a', "Serialized string", 3.14 };
+
+    StringStreamSerializer<NotPod> serializer;
+    StringStreamBuffer<NotPod> buffer;
+
+    EXPECT_TRUE( buffer.IsEmpty() );
+
+    serializer.Serialize( original, buffer );
+
+    EXPECT_FALSE( buffer.IsEmpty() );
+
+    NotPod loaded{ 'b', "Another string", 2.71 };
 
     EXPECT_NE( loaded.field1, original.field1 );
     EXPECT_NE( loaded.field2, original.field2 );

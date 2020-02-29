@@ -200,7 +200,7 @@ namespace serialization {
 
             auto SaveToBuffer = [&buffer = m_buffer, sep = sep]( auto&& element )
             {
-                buffer << std::forward<decltype( element )>( element ) << sep;
+                buffer << std::forward<std::remove_reference<decltype( element )>::type>( element ) << sep;
             };
 
             types::for_each( obj_tpl, SaveToBuffer );

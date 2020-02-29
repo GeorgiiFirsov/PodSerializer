@@ -77,6 +77,8 @@ namespace {
         );
     }
 
+    /************************************************************************************/
+
     //
     // Implementation of 'operator <<' for any POD structure.
     // 
@@ -89,18 +91,52 @@ namespace {
         std::basic_ostream<_Char, _Traits>& stream, const _Type& obj
     )
     {
+        using reflection::ToTuplePrecise;
+
         //
         // Convert object to tuple and then put each
         // element of tuple into our stream
         // 
+        
+        if (stream.iword( bs_fmt_id ) == flags::beautiful_struct) stream << "{ ";
 
-        auto obj_tpl = ToTuple( obj );
-        auto FlushToStream = [&stream]( auto&& element ) {
-            stream << std::forward<decltype( element )>( element ) << ' ';
+        auto obj_tpl = ToTuplePrecise( obj );
+        size_t index = 0;
+
+        auto FlushToStream = [&stream, &index]( auto&& element ) 
+        {
+            if (index++) stream << (stream.iword( bs_fmt_id ) == flags::beautiful_struct ? ", " : " ");
+            stream << std::forward<std::remove_reference<decltype( element )>::type>( element );
         };
 
         types::for_each( obj_tpl, FlushToStream );
 
+        if (stream.iword( bs_fmt_id ) == flags::beautiful_struct) stream << " }";
+
+        return stream;
+    }
+
+    /************************************************************************************/
+
+    static int const bs_fmt_id = std::ios_base::xalloc();
+
+namespace flags {
+    enum _Flags
+    {
+        no_beautiful_struct = 0,
+        beautiful_struct = 1
+    };
+} //namespace flags
+
+    template<
+        typename _Char /* Type of chars used in stream */,
+        typename _Traits
+            = std::char_traits<_Char>
+    > constexpr std::basic_ostream<_Char, _Traits>& operator<<(
+        std::basic_ostream<_Char, _Traits>& stream, flags::_Flags flag
+    )
+    {
+        stream.iword( bs_fmt_id ) = flag;
         return stream;
     }
 

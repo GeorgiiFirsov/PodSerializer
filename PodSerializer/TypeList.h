@@ -95,4 +95,23 @@ namespace {
         return types::Tuple<_Types...>{};
     }
 
+    /************************************************************************************/
+
+    //
+    // Metafunction that apples metafunction to each
+    // type in type list and returns type list with
+    // applied changes.
+    // 
+
+    template<
+        template<typename> 
+            typename _MetaFunc /* Metafunction to be applied */,
+        typename...  _Types    /* Types stored in type list */
+    > constexpr auto Apply( TypeList<_Types...> )
+    {
+        return TypeList<
+            typename _MetaFunc<_Types>::type...
+        >{};
+    }
+
 } // type_list

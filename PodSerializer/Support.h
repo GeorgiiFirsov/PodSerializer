@@ -55,3 +55,36 @@ using is_supported_type = \
         is_supported_type<__Type>::value,                                                            \
         #__Type " in " __FUNCTION__ " doesn't match the requirements for reflection (see Support.h)" \
     );
+
+template<typename _Type>
+using is_supported_type_extended = \
+    traits::conjunction<
+        traits::negation<
+            std::is_reference<_Type>
+        >,
+        traits::disjunction<
+            std::is_copy_constructible<_Type>,
+            traits::conjunction<
+                std::is_move_constructible<_Type>,
+                std::is_move_assignable<_Type>
+            >
+        >,
+        traits::negation<
+            std::is_polymorphic<_Type>
+        >,
+        traits::negation<
+            std::is_fundamental<_Type>
+        >,
+        std::is_standard_layout<_Type>,
+        traits::negation<
+            std::is_empty<_Type>
+        >,
+        MSVC_IS_AGGREGATE( _Type )
+    >;
+
+
+#define REFLECTION_CHECK_TYPE_EXTENDED( __Type )                                                     \
+    static_assert(                                                                                   \
+        is_supported_type_extended<__Type>::value,                                                   \
+        #__Type " in " __FUNCTION__ " doesn't match the requirements for reflection (see Support.h)" \
+    );

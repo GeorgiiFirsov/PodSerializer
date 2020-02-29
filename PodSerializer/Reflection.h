@@ -11,3 +11,5 @@
 #include "GetTypeIds.h"
 #include "ToTuple.h"
 #include "FromTuple.h"
+#include "GetTypeList.h"
+#include "ToTuplePrecise.h"

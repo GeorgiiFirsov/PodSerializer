@@ -3,7 +3,7 @@
 | Compiler | Version | Status             | Comments                                                               |
 |----------|---------|--------------------|------------------------------------------------------------------------|
 | MSVC     | 19.22   | [![Success][]]()   | Main build system.                                                     |
-| MSVC     | 19.16   | [![Success][]]()   | Test passed.                                                           |
+| MSVC     | 19.16   | [![Success][]]()<br>[![NotTested][]]()   | Test passed (master).<br>Not tested (dev)                                                           |
 | GCC      | 6.1     | [![Partial][]]()   | `GetFieldsCount` and `FromTuple` are compiled and tested successfully. |
 | CLang    | 6.0.0   | [![Partial][]]()   | `GetFieldsCount` and `FromTuple` are compiled and tested successfully. |
 

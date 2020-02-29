@@ -23,8 +23,8 @@
 //
 // Easiest way to assign an id to a type
 // 
-#define REFLECTION_REGISTER_TYPE( _Type, _Integer )                                                          \
-    constexpr size_t _GetIdByType( IdenticalType<_Type> ) noexcept { return _Integer; }                      \
+#define REFLECTION_REGISTER_TYPE( _Type, _Integer )                                                        \
+    constexpr size_t _GetIdByType( IdenticalType<_Type> ) noexcept { return _Integer; }                    \
     constexpr _Type  _GetTypeById( SizeT<_Integer> ) noexcept { constexpr _Type result{}; return result; }
 
 

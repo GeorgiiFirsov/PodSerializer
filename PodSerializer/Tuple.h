@@ -2,8 +2,6 @@
 
 #include "pch.h"
 
-// Standard header with std::tuple
-#include <tuple>
 
 /************************************************************************************
  * Motivation to implement own tuple.

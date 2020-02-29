@@ -72,6 +72,9 @@
     <ClInclude Include="TypeList.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="GetTypeList.h">
+      <Filter>Header Files\Reflection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

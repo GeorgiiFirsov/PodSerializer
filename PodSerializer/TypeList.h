@@ -95,4 +95,17 @@ namespace {
         return types::Tuple<_Types...>{};
     }
 
+    /************************************************************************************/
+
+    template<
+        template<typename> 
+            typename _MetaFunc,
+        typename...  _Types
+    > constexpr auto Apply( TypeList<_Types...> )
+    {
+        return TypeList<
+            typename _MetaFunc<_Types>::type...
+        >{};
+    }
+
 } // type_list

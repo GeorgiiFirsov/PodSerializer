@@ -164,6 +164,7 @@
     <ClInclude Include="Misc.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Reflection.h" />
+    <ClInclude Include="ToTuplePrecise.h" />
     <ClInclude Include="Traits.h" />
     <ClInclude Include="Serialization.h" />
     <ClInclude Include="SizeTArray.h" />

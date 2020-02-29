@@ -3,6 +3,7 @@
 #include "pch.h"
 
 #include "Support.h"
+#include "Misc.h"
 
 
 /************************************************************************************
@@ -36,7 +37,7 @@ namespace details {
     {
         template<
             typename _Type /* Type to be initialized */
-        > constexpr operator _Type&() const noexcept; // Not implemented - it's ok :)
+        > constexpr operator _Type&() const noexcept NOT_IMPLEMENTED;
     };
 
     /************************************************************************************/
@@ -99,7 +100,7 @@ namespace details {
     {
         using _CleanType = typename std::remove_cv<_Type>::type;
 
-        REFLECTION_CHECK_TYPE( _CleanType );
+        REFLECTION_CHECK_TYPE_EXTENDED( _CleanType );
 
         return details::_GetFieldsCount_Impl<_Type>( 
             std::make_index_sequence<sizeof( _Type )>{} 
@@ -114,7 +115,7 @@ namespace details {
     {
         using _CleanType = typename std::remove_cv<_Type>::type;
 
-        REFLECTION_CHECK_TYPE( _CleanType );
+        REFLECTION_CHECK_TYPE_EXTENDED( _CleanType );
 
         return details::_GetFieldsCount_Impl<_Type>( 
             std::make_index_sequence<sizeof( _Type )>{} 

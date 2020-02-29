@@ -31,6 +31,8 @@ using reflection::GetFieldsCount;
 using reflection::GetTypeIds;
 using reflection::ToTuple;
 using reflection::ToStandardTuple;
+using reflection::GetTypeList;
+using reflection::ToTuplePrecise;
 
 // ../PodSerializer/Serialization.h
 using serialization::BinarySerializer;

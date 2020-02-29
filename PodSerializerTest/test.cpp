@@ -50,6 +50,10 @@ struct Nested
     char field2;
 };
 
+bool operator==( const Nested& lhs, const Nested& rhs ) {
+    return (lhs.field1 == rhs.field1) && (lhs.field2 == rhs.field2);
+}
+
 struct ThreeFieldsWithNestedStruct
 {
     double field1;
@@ -66,6 +70,10 @@ struct NestedWithNested
     char   field1;
     Nested field2;
 };
+
+bool operator==( const NestedWithNested& lhs, const NestedWithNested& rhs ) {
+    return (lhs.field1 == rhs.field1) && (lhs.field2 == rhs.field2);
+}
 
 struct TwoFieldsTwoLevelsOfNestedStructs
 {
@@ -317,6 +325,61 @@ TEST(ToStandardTuple, TwoLevelsOfNested)
     EXPECT_EQ( std::get<3>( three_tpl ), 'b' );
 }
 
+TEST(ToTuplePrecise, TwoFields)
+{
+    TwoFields two_fields{ 'a', 42 };
+
+    auto two_tpl = ToTuplePrecise( two_fields );
+
+    EXPECT_EQ( types::get<0>( two_tpl ), 'a' );
+    EXPECT_EQ( types::get<1>( two_tpl ), 42  );
+}
+
+TEST(ToTuplePrecise, ThreeFieldsWithEnum)
+{
+    ThreeFieldsWithEnum three_fields{ 'a', first1, second2 };
+
+    auto three_tpl = ToTuplePrecise( three_fields );
+
+    EXPECT_EQ( types::get<0>( three_tpl ), 'a'     );
+    EXPECT_EQ( types::get<1>( three_tpl ), first1  );
+    EXPECT_EQ( types::get<2>( three_tpl ), second2 );
+}
+
+TEST(ToTuplePrecise, ThreeFieldsWithNestedStruct)
+{
+    ThreeFieldsWithNestedStruct three_fields{ 3.14, { 42, 'a' }, 'b' };
+    Nested expected_second{ 42, 'a' };
+
+    auto three_tpl = ToTuplePrecise( three_fields );
+
+    EXPECT_EQ( types::get<0>( three_tpl ), 3.14            );
+    EXPECT_EQ( types::get<1>( three_tpl ), expected_second );
+    EXPECT_EQ( types::get<2>( three_tpl ), 'b'             );
+}
+
+TEST(ToTuplePrecise, TwoFieldsTwoLevelsOfNestedStructs)
+{
+    TwoFieldsTwoLevelsOfNestedStructs two_fields{ 42, { 'a', { -5, 'b' } } };
+    NestedWithNested expected_second{ 'a', { -5, 'b' } };
+
+    auto two_tpl = ToTuplePrecise( two_fields );
+
+    EXPECT_EQ( types::get<0>( two_tpl ), 42              );
+    EXPECT_EQ( types::get<1>( two_tpl ), expected_second );
+}
+
+TEST(ToTuplePrecise, NotPod)
+{
+    NotPod three_fields{ 'a', "String inside", 3.14 };
+
+    auto three_tpl = ToTuplePrecise( three_fields );
+
+    EXPECT_EQ( types::get<0>( three_tpl ), 'a'             );
+    EXPECT_EQ( types::get<1>( three_tpl ), "String inside" );
+    EXPECT_EQ( types::get<2>( three_tpl ), 3.14            );
+}
+
  
 /************************************************************************************
  * Visual stream operators tests
@@ -324,24 +387,38 @@ TEST(ToStandardTuple, TwoLevelsOfNested)
 
 TEST(Operators, ostream)
 {
-    using operators::operator <<;
+    using namespace operators;
     
     std::cout << "It is a visual test.\n" << std::endl;
 
     TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
 
     std::cout << ten_fields << std::endl;
+    std::cout << flags::beautiful_struct << ten_fields << flags::no_beautiful_struct << std::endl;
 }
 
 TEST(Operators, wostream)
 {
-    using operators::operator <<;
+    using namespace operators;
     
     std::wcout << L"It is a visual test.\n" << std::endl;
 
     TenFields ten_fields{ 'a', 25, 4, 3.14, 0, 'b', 54, 32, 2.71, 9 };
 
-    std::wcout << ten_fields << std::endl;
+	std::wcout << ten_fields << std::endl;
+	std::wcout << flags::beautiful_struct << ten_fields << flags::no_beautiful_struct << std::endl;
+}
+
+TEST(Operators, ostreamNotPod)
+{
+    using namespace operators;
+    
+    std::cout << "It is a visual test.\n" << std::endl;
+
+    NotPod three_fields{ 'a', "String to print", 3.14 };
+
+    std::cout << three_fields << std::endl;
+    std::cout << flags::beautiful_struct << three_fields << flags::no_beautiful_struct << std::endl;
 }
 
 
@@ -464,16 +541,6 @@ TEST(TypeList, Size)
 
     EXPECT_EQ( Size( empty ), 0 );
 }
-
-// TEST(TypeList, get)
-// {
-//     TypeList<double, int, std::string, short> tl;
-// 
-//     EXPECT_EQ( get<0>( tl ), Identity<double>{} );
-//     EXPECT_EQ( get<1>( tl ), Identity<int>{} );
-//     EXPECT_EQ( get<2>( tl ), Identity<std::string>{} );
-//     EXPECT_EQ( get<3>( tl ), Identity<short>{} );
-// }
 
 TEST(TypeList, TupleType)
 {

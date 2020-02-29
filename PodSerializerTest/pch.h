@@ -19,7 +19,6 @@
 #include "../PodSerializer/Serialization.h"
 #include "../PodSerializer/TypeList.h"
 #include "../PodSerializer/Tuple.h"
-#include "../PodSerializer/GetTypeList.h"
 
 
 //
@@ -31,6 +30,8 @@ using reflection::GetFieldsCount;
 using reflection::GetTypeIds;
 using reflection::ToTuple;
 using reflection::ToStandardTuple;
+using reflection::GetTypeList;
+using reflection::ToTuplePrecise;
 
 // ../PodSerializer/Serialization.h
 using serialization::BinarySerializer;
@@ -50,6 +51,3 @@ using type_list::Apply;
 // ../PodSerializer/Tuple.h
 using types::Tuple;
 using types::ToStdTuple;
-
-//../PodSerializer/GetTypeList.h
-using reflection::GetTypeList;

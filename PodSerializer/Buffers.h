@@ -196,7 +196,7 @@ namespace serialization {
         template<typename _Type = value_t>
         void Save( const _Type& obj )
         {
-            using namespace operators;
+            using namespace io_operators;
 
             if (m_isFull) {
                 Clear();
@@ -209,7 +209,7 @@ namespace serialization {
 
         void Load( value_t& obj )
         {
-            using namespace operators;
+            using namespace io_operators;
 
             //
             // Check if buffer contains a value.
@@ -222,7 +222,7 @@ namespace serialization {
 
             buffer_copy >> io_manipulators::io_internal::set_separator( sep );
 
-            buffer_copy >> std::noskipws >> obj;
+            buffer_copy >> obj;
         }
 
     private:

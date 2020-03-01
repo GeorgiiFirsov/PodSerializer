@@ -5,10 +5,12 @@
 #include "Config.h"
 
 #include "IOManipulators.h"
+#include "StringStream.h"
 #include "Reflection.h"
 #include "Tuple.h"
 
-namespace operators {
+
+namespace io_operators {
 namespace {
 
     //
@@ -59,7 +61,7 @@ namespace {
 
             if (bIsSepSet && !is_supported_type_extended<_CleanType>::value)
             {
-                std::basic_stringstream<_Char, _Traits> buffer;
+                io_stream::BasicStringStream<_Char, _Traits> buffer;
 
                 //
                 // Read char-by-char into temporary buffer until
@@ -73,11 +75,11 @@ namespace {
                     buffer << ch;
                 }
 
-                buffer >> std::noskipws >> element;
+                buffer >> element;
             }
             else
             {
-                stream >> std::noskipws >> element;
+                stream >> element;
             }
         };
 

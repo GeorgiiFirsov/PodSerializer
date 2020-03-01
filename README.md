@@ -2,7 +2,7 @@
 
 | Compiler | Version | Status             | Comments                                                               |
 |----------|---------|--------------------|------------------------------------------------------------------------|
-| MSVC     | 19.22   | [![Partial][]]()   | Main build system. New serialization doesn't pass all tests.           |
+| MSVC     | 19.22   | [![Success][]]()   | Main build system.                                                     |
 | MSVC     | 19.16   | [![Success][]]()<br>[![NotTested][]]()   | Test passed (master).<br>Not tested (dev)                                                           |
 | GCC      | 6.1     | [![Partial][]]()   | `GetFieldsCount` and `FromTuple` are compiled and tested successfully. |
 | CLang    | 6.0.0   | [![Partial][]]()   | `GetFieldsCount` and `FromTuple` are compiled and tested successfully. |
@@ -73,6 +73,8 @@ Another half of th library contains several reflection tools. All of them can be
 ##### Example #1
 ```cpp
 #include "Reflection.h"
+
+using namespace io_operators;
 
 struct MyStruct
 {
@@ -152,6 +154,34 @@ obj = reflection::FromTuple<MyStruct>( tpl );
 assert( obj.field1, -42  ); // 'obj' now contains exactly the same values as tuple
 assert( obj.field2, 2.71 );
 assert( obj.field3, 'b'  );
+```
+
+##### Example #5
+
+```cpp
+#include "StreamOperators.h"
+#include "Reflection.h"
+#include "Tuple.h"
+
+using namespace io_operators;
+
+struct Person 
+{
+    std::string m_name;
+    size_t m_age;
+};
+
+// ...
+
+Person bob{ "Bob", 45 };
+
+std::cout << bob;                     // will print: Bob, 45
+std::cout << beautiful_struct << bob; // will print: { Bob, 45 }
+
+auto bob_tpl = ToToplePrecise( bob );
+
+std::cout << types::get<0>( bob_tpl ) << " is " 
+          << types::get<1>( bob_tpl ) << " years old." << std::endl;
 ```
 
 ## Requirements

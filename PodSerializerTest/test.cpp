@@ -392,7 +392,7 @@ TEST(ToTuplePrecise, NotPod)
 
 TEST(Operators, ostream)
 {
-    using namespace operators;
+    using namespace io_operators;
     
     std::cout << "It is a visual test.\n" << std::endl;
 
@@ -404,7 +404,7 @@ TEST(Operators, ostream)
 
 TEST(Operators, wostream)
 {
-    using namespace operators;
+    using namespace io_operators;
     
     std::wcout << L"It is a visual test.\n" << std::endl;
 
@@ -416,7 +416,7 @@ TEST(Operators, wostream)
 
 TEST(Operators, ostreamNotPod)
 {
-    using namespace operators;
+    using namespace io_operators;
     
     std::cout << "It is a visual test.\n" << std::endl;
 
@@ -428,7 +428,7 @@ TEST(Operators, ostreamNotPod)
 
 TEST(Operators, ostreamNested)
 {
-    using namespace operators;
+    using namespace io_operators;
     
     std::cout << "It is a visual test.\n" << std::endl;
 

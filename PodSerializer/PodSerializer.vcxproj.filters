@@ -81,6 +81,9 @@
     <ClInclude Include="IOManipulators.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="StringStream.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

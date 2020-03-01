@@ -56,4 +56,21 @@ namespace details {
         return details::_ToTuplePrecise_Impl( obj );
     }
 
+    template<typename _Type>
+    constexpr  /* Maybe it is possible to construct our tuple in compile-time */
+    auto ToStandardTuplePrecise(
+         const _Type& obj /* Object to convert into tuple */
+    )
+    {
+        using types::ToStdTuple;
+
+        using _CleanType = typename std::remove_cv<_Type>::type;
+
+        REFLECTION_CHECK_TYPE_EXTENDED( _CleanType );
+
+        auto tpl = details::_ToTuplePrecise_Impl( obj );
+
+        return ToStdTuple( tpl );
+    }
+
 } // namespace reflection

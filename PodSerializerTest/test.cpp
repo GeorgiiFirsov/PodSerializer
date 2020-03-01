@@ -385,6 +385,61 @@ TEST(ToTuplePrecise, NotPod)
     EXPECT_EQ( types::get<2>( three_tpl ), 3.14            );
 }
 
+TEST(ToStandardTuplePrecise, TwoFields)
+{
+    TwoFields two_fields{ 'a', 42 };
+
+    auto two_tpl = ToStandardTuplePrecise( two_fields );
+
+    EXPECT_EQ( std::get<0>( two_tpl ), 'a' );
+    EXPECT_EQ( std::get<1>( two_tpl ), 42  );
+}
+
+TEST(ToStandardTuplePrecise, ThreeFieldsWithEnum)
+{
+    ThreeFieldsWithEnum three_fields{ 'a', first1, second2 };
+
+    auto three_tpl = ToStandardTuplePrecise( three_fields );
+
+    EXPECT_EQ( std::get<0>( three_tpl ), 'a'     );
+    EXPECT_EQ( std::get<1>( three_tpl ), first1  );
+    EXPECT_EQ( std::get<2>( three_tpl ), second2 );
+}
+
+TEST(ToStandardTuplePrecise, ThreeFieldsWithNestedStruct)
+{
+    ThreeFieldsWithNestedStruct three_fields{ 3.14, { 42, 'a' }, 'b' };
+    Nested expected_second{ 42, 'a' };
+
+    auto three_tpl = ToStandardTuplePrecise( three_fields );
+
+    EXPECT_EQ( std::get<0>( three_tpl ), 3.14            );
+    EXPECT_EQ( std::get<1>( three_tpl ), expected_second );
+    EXPECT_EQ( std::get<2>( three_tpl ), 'b'             );
+}
+
+TEST(ToStandardTuplePrecise, TwoFieldsTwoLevelsOfNestedStructs)
+{
+    TwoFieldsTwoLevelsOfNestedStructs two_fields{ 42, { 'a', { -5, 'b' } } };
+    NestedWithNested expected_second{ 'a', { -5, 'b' } };
+
+    auto two_tpl = ToStandardTuplePrecise( two_fields );
+
+    EXPECT_EQ( std::get<0>( two_tpl ), 42              );
+    EXPECT_EQ( std::get<1>( two_tpl ), expected_second );
+}
+
+TEST(ToStandardTuplePrecise, NotPod)
+{
+    NotPod three_fields{ 'a', "String inside", 3.14 };
+
+    auto three_tpl = ToStandardTuplePrecise( three_fields );
+
+    EXPECT_EQ( std::get<0>( three_tpl ), 'a'             );
+    EXPECT_EQ( std::get<1>( three_tpl ), "String inside" );
+    EXPECT_EQ( std::get<2>( three_tpl ), 3.14            );
+}
+
  
 /************************************************************************************
  * Visual stream operators tests

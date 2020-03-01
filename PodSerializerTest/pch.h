@@ -33,6 +33,7 @@ using reflection::ToTuple;
 using reflection::ToStandardTuple;
 using reflection::GetTypeList;
 using reflection::ToTuplePrecise;
+using reflection::ToStandardTuplePrecise;
 
 // ../PodSerializer/Serialization.h
 using serialization::BinarySerializer;

@@ -13,8 +13,9 @@
 [NotTested]: https://img.shields.io/badge/Build%20Status-not%20built%20yet-inactive
 
 PodSerializer is actually two-in-one library: it contains various static reflection tools along with classes for serialization of POD's.
+Now it is possible to serialize some non-POD's into `StringStreamSerializer`. Also you can convert them into a tuple with `ToTuplePrecise` and `ToStandardTuplePrecise` methods.
 
-> Developing in progress (pointers and bit-fields are not supported now)
+> Developing in progress
 
 > Documentation in progress
 

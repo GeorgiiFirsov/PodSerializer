@@ -54,8 +54,7 @@ Moreover now you are allowed to write the following code:
 ```cpp
 #include "StreamOperators.h"
 
-using operators::operator <<;
-using operators::operator >>;
+using namespace io_operators;
 
 // ...
 
@@ -180,6 +179,7 @@ std::cout << beautiful_struct << bob; // will print: { Bob, 45 }
 
 auto bob_tpl = ToToplePrecise( bob );
 
+// Will print: Bob is 45 years old.
 std::cout << types::get<0>( bob_tpl ) << " is " 
           << types::get<1>( bob_tpl ) << " years old." << std::endl;
 ```

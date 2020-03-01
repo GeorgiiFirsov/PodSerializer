@@ -161,9 +161,11 @@
     <ClInclude Include="GetFieldsCount.h" />
     <ClInclude Include="GetTypeIds.h" />
     <ClInclude Include="GetTypeList.h" />
+    <ClInclude Include="IOManipulators.h" />
     <ClInclude Include="Misc.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Reflection.h" />
+    <ClInclude Include="StringStream.h" />
     <ClInclude Include="ToTuplePrecise.h" />
     <ClInclude Include="Traits.h" />
     <ClInclude Include="Serialization.h" />

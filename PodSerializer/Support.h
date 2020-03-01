@@ -4,6 +4,7 @@
 
 #include "Traits.h"
 
+
 /************************************************************************************
  * Supported types.
  * 
@@ -50,10 +51,10 @@ using is_supported_type = \
 //
 // Macro to check type requirements.
 // 
-#define REFLECTION_CHECK_TYPE( __Type )                                                              \
-    static_assert(                                                                                   \
-        is_supported_type<__Type>::value,                                                            \
-        #__Type " in " __FUNCTION__ " doesn't match the requirements for reflection (see Support.h)" \
+#define REFLECTION_CHECK_TYPE( __Type )                                          \
+    static_assert(                                                               \
+        is_supported_type<__Type>::value,                                        \
+        #__Type " doesn't match the requirements for reflection (see Support.h)" \
     );
 
 template<typename _Type>
@@ -83,8 +84,8 @@ using is_supported_type_extended = \
     >;
 
 
-#define REFLECTION_CHECK_TYPE_EXTENDED( __Type )                                                     \
-    static_assert(                                                                                   \
-        is_supported_type_extended<__Type>::value,                                                   \
-        #__Type " in " __FUNCTION__ " doesn't match the requirements for reflection (see Support.h)" \
+#define REFLECTION_CHECK_TYPE_EXTENDED( __Type )                                 \
+    static_assert(                                                               \
+        is_supported_type_extended<__Type>::value,                               \
+        #__Type " doesn't match the requirements for reflection (see Support.h)" \
     );

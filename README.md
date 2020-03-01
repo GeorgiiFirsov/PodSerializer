@@ -54,8 +54,7 @@ Moreover now you are allowed to write the following code:
 ```cpp
 #include "StreamOperators.h"
 
-using operators::operator <<;
-using operators::operator >>;
+using namespace io_operators;
 
 // ...
 
@@ -73,6 +72,8 @@ Another half of th library contains several reflection tools. All of them can be
 ##### Example #1
 ```cpp
 #include "Reflection.h"
+
+using namespace io_operators;
 
 struct MyStruct
 {
@@ -152,6 +153,35 @@ obj = reflection::FromTuple<MyStruct>( tpl );
 assert( obj.field1, -42  ); // 'obj' now contains exactly the same values as tuple
 assert( obj.field2, 2.71 );
 assert( obj.field3, 'b'  );
+```
+
+##### Example #5
+
+```cpp
+#include "StreamOperators.h"
+#include "Reflection.h"
+#include "Tuple.h"
+
+using namespace io_operators;
+
+struct Person 
+{
+    std::string m_name;
+    size_t m_age;
+};
+
+// ...
+
+Person bob{ "Bob", 45 };
+
+std::cout << bob;                     // will print: Bob, 45
+std::cout << beautiful_struct << bob; // will print: { Bob, 45 }
+
+auto bob_tpl = ToToplePrecise( bob );
+
+// Will print: Bob is 45 years old.
+std::cout << types::get<0>( bob_tpl ) << " is " 
+          << types::get<1>( bob_tpl ) << " years old." << std::endl;
 ```
 
 ## Requirements

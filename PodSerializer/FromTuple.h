@@ -88,7 +88,7 @@ namespace details {
     {
         using _CleanType = typename std::remove_cv<_Type>::type;
 
-        REFLECTION_CHECK_TYPE( _CleanType );
+        REFLECTION_CHECK_TYPE_EXTENDED( _CleanType );
 
         return details::_FromTuple_Impl<_Type>( 
             tpl, std::make_index_sequence<sizeof...( _Types )>{} 

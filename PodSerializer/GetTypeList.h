@@ -120,7 +120,7 @@ namespace details {
     /************************************************************************************/
 
     //
-    // This struct instantiates a TypeList basecd on structure
+    // This struct instantiates a TypeList based on structure
     // type and indices of internal fields.
     // 
 
@@ -129,7 +129,11 @@ namespace details {
         size_t... _Idxs /* Indices of fields */
     > struct _TypeList_Impl
        /* types::Tuple<size_t> */
-        : types::Tuple<decltype( _Type{ _KVUniversalInit<_Type, _Idxs>{}... }, size_t{ 0 } )>
+        : types::Tuple<decltype(
+            /* Injecting binding functions to construct mapping */
+            _Type{ _KVUniversalInit<_Type, _Idxs>{}... }, 
+            size_t{ 0 } 
+        )>
     {
         using tlist = decltype(
             /* Here we unwind one Identity level, because 

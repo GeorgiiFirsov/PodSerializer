@@ -45,7 +45,7 @@ namespace details {
                              /* vvv       User API      vvv */
 
     template<typename _Type> 
-    constexpr decltype(auto) ToTuplePrecise(
+    constexpr auto ToTuplePrecise(
         const _Type& obj /* Object to convert into tuple */
     )
     {

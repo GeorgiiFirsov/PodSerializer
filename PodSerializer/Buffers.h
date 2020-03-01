@@ -170,11 +170,12 @@ namespace serialization {
         using value_t = _Type;
 
     public:
-        BasicStringStreamBuffer()
+        explicit BasicStringStreamBuffer( _Char separator = 0x0 )
             : m_isFull( false )
+            , m_sep( separator )
             , m_buffer( buffer_t{} )
         {
-            m_buffer << io_manipulators::io_internal::set_separator( sep );
+            m_buffer << io_manipulators::io_internal::set_separator( m_sep );
         }
 
         BasicStringStreamBuffer( const BasicStringStreamBuffer<_Type, _Char, _Traits, _Allocator>& ) = delete;
@@ -220,7 +221,7 @@ namespace serialization {
 
             buffer_t buffer_copy = buffer_t( m_buffer.str() );
 
-            buffer_copy >> io_manipulators::io_internal::set_separator( sep );
+            buffer_copy >> io_manipulators::io_internal::set_separator( m_sep );
 
             buffer_copy >> obj;
         }
@@ -235,7 +236,7 @@ namespace serialization {
         //
         // Separator between fields
         // 
-        const _Char sep = 0x0;
+        _Char m_sep;
 
         //
         // Internal buffer

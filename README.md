@@ -178,7 +178,7 @@ Person bob{ "Bob", 45 };
 std::cout << bob;                     // will print: Bob, 45
 std::cout << beautiful_struct << bob; // will print: { Bob, 45 }
 
-auto bob_tpl = ToToplePrecise( bob );
+auto bob_tpl = ToTuplePrecise( bob );
 
 // Will print: Bob is 45 years old.
 std::cout << types::get<0>( bob_tpl ) << " is " 

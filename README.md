@@ -3,7 +3,7 @@
 | Compiler | Version | Status             | Comments                                                               |
 |----------|---------|--------------------|------------------------------------------------------------------------|
 | MSVC     | 19.22   | [![Success][]]()   | Main build system.                                                     |
-| MSVC     | 19.16   | [![Success][]]()<br>[![NotTested][]]()   | Test passed (master).<br>Not tested (dev)                                                           |
+| MSVC     | 19.16   | [![Partial][]]()   | Precise reflection doesn't work on MSVC 19.16                          |
 | GCC      | 6.1     | [![Partial][]]()   | `GetFieldsCount` and `FromTuple` are compiled and tested successfully. |
 | CLang    | 6.0.0   | [![Partial][]]()   | `GetFieldsCount` and `FromTuple` are compiled and tested successfully. |
 
@@ -178,7 +178,7 @@ Person bob{ "Bob", 45 };
 std::cout << bob;                     // will print: Bob, 45
 std::cout << beautiful_struct << bob; // will print: { Bob, 45 }
 
-auto bob_tpl = ToToplePrecise( bob );
+auto bob_tpl = ToTuplePrecise( bob );
 
 // Will print: Bob is 45 years old.
 std::cout << types::get<0>( bob_tpl ) << " is " 

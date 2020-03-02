@@ -624,7 +624,7 @@ TEST(Serialization, StringStreamContainsEnum)
 
 TEST(Serialization, StringStreamNotPod)
 {
-    NotPod original{ 'a', "Serialized string", 3.14 };
+    NotPod original{ 'a', "Serialized\n string", 3.14 };
 
     StringStreamSerializer<NotPod> serializer;
     StringStreamBuffer<NotPod> buffer;

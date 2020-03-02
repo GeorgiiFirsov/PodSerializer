@@ -21,7 +21,7 @@ namespace io_stream {
     { /* We don't change anything here */ };
 
     //
-    // Ovreload of operator>> for strings, that is insensetive to spaces
+    // Overload of operator>> for strings, that is insensetive to spaces, escape sequences, etc.
     // 
 
     template<
@@ -33,7 +33,7 @@ namespace io_stream {
         std::basic_string<_Char, _Traits, _Allocator>& str
     )
     {
-        std::getline( stream, str );
+        str = stream.str();
         return stream;
     }
 

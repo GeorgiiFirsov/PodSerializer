@@ -194,8 +194,7 @@ namespace serialization {
             m_isFull = false;
         }
 
-        template<typename _Type = value_t>
-        void Save( const _Type& obj )
+        void Save( const value_t& obj )
         {
             using namespace io_operators;
 

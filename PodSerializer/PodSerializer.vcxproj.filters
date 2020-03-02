@@ -84,6 +84,9 @@
     <ClInclude Include="StringStream.h">
       <Filter>Header Files\Serialization</Filter>
     </ClInclude>
+    <ClInclude Include="BasicSerializer.h">
+      <Filter>Header Files\Serialization</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">

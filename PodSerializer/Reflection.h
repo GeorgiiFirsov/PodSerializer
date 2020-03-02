@@ -1,12 +1,11 @@
 #pragma once
 
-#include "pch.h"
+// This file is a library include file
 
+// Configuration checking
 #include "Config.h"
 
-//
-// Just enumeration of headers of 'Reflection' section
-// 
+// Library includes
 #include "GetFieldsCount.h"
 #include "GetTypeIds.h"
 #include "ToTuple.h"

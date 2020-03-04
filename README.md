@@ -175,7 +175,7 @@ struct Person
 
 Person bob{ "Bob", 45 };
 
-std::cout << bob;                     // will print: Bob, 45
+std::cout << bob;                     // will print: Bob 45
 std::cout << beautiful_struct << bob; // will print: { Bob, 45 }
 
 auto bob_tpl = ToTuplePrecise( bob );

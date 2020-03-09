@@ -2,8 +2,6 @@
 
 #include "pch.h"
 
-#include <type_traits>
-
 #define TRAIT_REGISTER_TYPE( _Type ) \
     template<> struct is_registered_type<_Type> : std::true_type { }
 
@@ -120,8 +118,8 @@ namespace traits {
 
 #else
 
-#   define MSVC_IS_AGGREGATE( _Type )
-#   define MSVC_IS_AGGREGATE_V( _Type )
+#   define MSVC_IS_AGGREGATE( _Type ) std::true_type
+#   define MSVC_IS_AGGREGATE_V( _Type ) true
 
 #endif
 

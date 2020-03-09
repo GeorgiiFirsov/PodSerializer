@@ -138,7 +138,7 @@ namespace details {
         using tlist = decltype(
             /* Here we unwind one Identity level, because 
              * 'GetValue' returns 'Identity<_TypeValue>' */
-            Apply<_UnwindIdentity>( 
+            type_list::Apply<_UnwindIdentity>( 
                 type_list::TypeList<decltype( GetValue( Key<_Type, _Idxs>{} ) )...>{} 
             )
         );
@@ -157,7 +157,7 @@ namespace details {
         size_t... _Idxs /* Indices of fields */
     > constexpr auto _GetTypeList_Impl( std::index_sequence<_Idxs...> ) noexcept
     {
-        using tlist_t = _TypeList_Impl<_Type, _Idxs...>::tlist;
+        using tlist_t = typename _TypeList_Impl<_Type, _Idxs...>::tlist;
         return tlist_t{};
     }
 

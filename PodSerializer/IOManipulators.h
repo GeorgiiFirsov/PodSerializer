@@ -9,9 +9,9 @@ namespace io_internal {
     // Separator inserter. For internal use.
     //
     
-	static int const sp_fmt_id = std::ios_base::xalloc();
+    static int const sp_fmt_id = std::ios_base::xalloc();
 
-	template<typename _Char>
+    template<typename _Char>
     struct _SepTag
     {
         explicit _SepTag( _Char ch )
@@ -48,15 +48,15 @@ namespace io_internal {
         stream.iword( sp_fmt_id ) = sep.m_sep;
         stream.iword( sp_set_fmt_id) = io_manipulators::io_internal::separator_enabled;
         return stream;
-	}
+    }
 
-	/************************************************************************************/
+    /************************************************************************************/
 
     //
     // Separator detector. For internal use.
     // 
 
-	static int const sp_set_fmt_id = std::ios_base::xalloc();
+    static int const sp_set_fmt_id = std::ios_base::xalloc();
 
     enum separator_settings
     {

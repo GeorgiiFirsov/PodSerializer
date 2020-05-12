@@ -69,7 +69,8 @@ namespace details {
         // the same types in the same order.
         // Here we can just cast structure to a tuple. ( Black magic }-) )
         // 
-        if (sizeof( tuple_t ) == sizeof( _Type )){
+        #pragma warning(suppress: 4127) // conditional expression is constant
+        if __CONSTEXPR_SINCE_CXX17 (sizeof( tuple_t ) == sizeof( _Type )){
             auto pObj = static_cast<const void*>( &obj );
             return *static_cast<const tuple_t*>( pObj );
         }

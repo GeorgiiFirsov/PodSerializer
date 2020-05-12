@@ -39,8 +39,8 @@ namespace {
         // 
         using tuple_t = decltype( ToTuplePrecise( obj ) );
 
-        auto sep = static_cast<_Char>( stream.iword( io_manipulators::io_internal::sp_fmt_id ) );
-        bool bIsSepSet = stream.iword( io_manipulators::io_internal::sp_set_fmt_id ) == io_manipulators::io_internal::separator_enabled;
+        auto sep = static_cast<_Char>( stream.iword( io_manipulators::io_internal::separator_fmt_id ) );
+        bool bIsSepSet = stream.iword( io_manipulators::io_internal::is_separator_set_fmt_id ) == io_manipulators::io_internal::separator_enabled;
 
         //
         // Create one and put values from stream type-safely into it
@@ -162,8 +162,8 @@ namespace {
         // element of tuple into our stream
         // 
         
-        auto sep = static_cast<_Char>( stream.iword( io_manipulators::io_internal::sp_fmt_id ) );
-        bool bIsSepSet = stream.iword( io_manipulators::io_internal::sp_set_fmt_id ) == io_manipulators::io_internal::separator_enabled;
+        auto sep = static_cast<_Char>( stream.iword( io_manipulators::io_internal::separator_fmt_id ) );
+        bool bIsSepSet = stream.iword( io_manipulators::io_internal::is_separator_set_fmt_id ) == io_manipulators::io_internal::separator_enabled;
         bool bIsBeautiful = stream.iword( io_manipulators::bs_fmt_id ) == io_manipulators::flags::beautiful_struct;
 
         if (bIsBeautiful) {

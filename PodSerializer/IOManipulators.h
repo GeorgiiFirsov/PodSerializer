@@ -9,31 +9,31 @@ namespace io_internal {
     // Separator inserter. For internal use.
     //
     
-    static int const sp_fmt_id = std::ios_base::xalloc();
+    static int const separator_fmt_id = std::ios_base::xalloc();
 
     template<typename _Char>
-    struct _SepTag
+    struct _SeparatorTag
     {
-        explicit _SepTag( _Char ch )
+        explicit _SeparatorTag( _Char ch )
             : m_sep( ch ) { }
 
         _Char m_sep;
     };
 
     template<typename _Char>
-    _SepTag<_Char> set_separator( _Char _Sep )
-    { return _SepTag<_Char>{ _Sep }; }
+    _SeparatorTag<_Char> set_separator( _Char _Sep )
+    { return _SeparatorTag<_Char>{ _Sep }; }
 
     template<
         typename _Char /* Type of chars used in stream */,
         typename _Traits
             = std::char_traits<_Char>
     > constexpr std::basic_ostream<_Char, _Traits>& operator<<(
-        std::basic_ostream<_Char, _Traits>& stream, const _SepTag<_Char>& sep
+        std::basic_ostream<_Char, _Traits>& stream, const _SeparatorTag<_Char>& sep
     )
     {
-        stream.iword( sp_fmt_id ) = sep.m_sep;
-        stream.iword( sp_set_fmt_id) = io_manipulators::io_internal::separator_enabled;
+        stream.iword( separator_fmt_id ) = sep.m_sep;
+        stream.iword( is_separator_set_fmt_id ) = io_manipulators::io_internal::separator_enabled;
         return stream;
     }
 
@@ -42,11 +42,11 @@ namespace io_internal {
         typename _Traits
             = std::char_traits<_Char>
     > constexpr std::basic_istream<_Char, _Traits>& operator>>(
-        std::basic_istream<_Char, _Traits>& stream, const _SepTag<_Char>& sep
+        std::basic_istream<_Char, _Traits>& stream, const _SeparatorTag<_Char>& sep
     )
     {
-        stream.iword( sp_fmt_id ) = sep.m_sep;
-        stream.iword( sp_set_fmt_id) = io_manipulators::io_internal::separator_enabled;
+        stream.iword( separator_fmt_id ) = sep.m_sep;
+        stream.iword( is_separator_set_fmt_id ) = io_manipulators::io_internal::separator_enabled;
         return stream;
     }
 
@@ -56,7 +56,7 @@ namespace io_internal {
     // Separator detector. For internal use.
     // 
 
-    static int const sp_set_fmt_id = std::ios_base::xalloc();
+    static int const is_separator_set_fmt_id = std::ios_base::xalloc();
 
     enum separator_settings
     {
@@ -71,7 +71,7 @@ namespace io_internal {
         std::basic_ostream<_Char, _Traits>& stream, separator_settings flag
     )
     {
-        stream.iword( sp_set_fmt_id ) = flag;
+        stream.iword( is_separator_set_fmt_id ) = flag;
         return stream;
     }
 
@@ -83,7 +83,7 @@ namespace io_internal {
         std::basic_istream<_Char, _Traits>& stream, separator_settings flag
     )
     {
-        stream.iword( sp_set_fmt_id ) = flag;
+        stream.iword( is_separator_set_fmt_id ) = flag;
         return stream;
     }
 

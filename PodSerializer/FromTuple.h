@@ -28,7 +28,7 @@ namespace details {
     template<typename _Stored>
     struct TypeCaster
     {
-        //
+        // 
         // Reference to external value
         // 
         _Stored& value;

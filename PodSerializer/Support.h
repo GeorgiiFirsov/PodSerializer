@@ -76,7 +76,6 @@ using is_supported_type_extended = \
         traits::negation<
             std::is_fundamental<_Type>
         >,
-        std::is_standard_layout<_Type>,
         traits::negation<
             std::is_empty<_Type>
         >,

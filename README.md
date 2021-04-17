@@ -44,8 +44,8 @@ assert( !buffer.IsEmpty() );              // Here buffer will never be empty
 
 serializer.Deserialize( loaded, buffer ); // Now load data into a new variable
 
-assert( original.field1, loaded.field1 ); // Ensure equality of fields of loaded and original structs
-assert( original.field2, loaded.field2 );
+assert( original.field1 == loaded.field1 ); // Ensure equality of fields of loaded and original structs
+assert( original.field2 == loaded.field2 );
 ```
 
 Serialization to I/O streams differs from example above only by usage of classes `StringStreamSerializer` and `StringStreamBuffer` instead of `BinarySerializer` and `BinaryBuffer` respectively.
@@ -104,9 +104,9 @@ MyStruct obj{ 42, 3.14, 'a' };
 // Convert our struct into a tuple
 auto tpl = reflection::ToTuple( obj ); // tpl is instance of type types::Tuple<int, double, char>
 
-assert( types::get<0>( tpl ), obj.field1 ); // Tuple contains exactly the same values as 'obj'
-assert( types::get<1>( tpl ), obj.field2 );
-assert( types::get<2>( tpl ), obj.field3 );
+assert( types::get<0>( tpl ) == obj.field1 ); // Tuple contains exactly the same values as 'obj'
+assert( types::get<1>( tpl ) == obj.field2 );
+assert( types::get<2>( tpl ) == obj.field3 );
 
 // Will be printed: "42 3.14 a"
 // It is really important to use a generic lambda (with template invocation function) inside types::for_each
@@ -129,9 +129,9 @@ MyStruct obj{ 42, 3.14, 'a' };
 // You can convert your struct into a standard tuple
 auto tpl = reflection::ToStandardTuple( obj ); // tpl is instance of type std::tuple<int, double, char>
 
-assert( std::get<0>( tpl ), obj.field1 ); // Tuple contains exactly the same values as 'obj'
-assert( std::get<1>( tpl ), obj.field2 );
-assert( std::get<2>( tpl ), obj.field3 );
+assert( std::get<0>( tpl ) == obj.field1 ); // Tuple contains exactly the same values as 'obj'
+assert( std::get<1>( tpl ) == obj.field2 );
+assert( std::get<2>( tpl ) == obj.field3 );
 
 //
 // Moreover you can use ToStdTuple function to convert types::Typle into corresponding std::tuple
@@ -151,9 +151,9 @@ types::Tuple<int, double, char> tpl{ -42, 2.71, 'b' };
 // Load values from tuple directly into 'obj'
 obj = reflection::FromTuple<MyStruct>( tpl );
 
-assert( obj.field1, -42  ); // 'obj' now contains exactly the same values as tuple
-assert( obj.field2, 2.71 );
-assert( obj.field3, 'b'  );
+assert( obj.field1 == -42  ); // 'obj' now contains exactly the same values as tuple
+assert( obj.field2 == 2.71 );
+assert( obj.field3 == 'b'  );
 ```
 
 ##### Example #5
